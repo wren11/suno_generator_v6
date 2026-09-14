@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "trained_at": "2026-09-14T18:44:36.318103+00:00",
-  "songs_used": 7203,
-  "songs_with_lyrics": 5145,
+  "trained_at": "2026-09-14T19:07:00.675726+00:00",
+  "songs_used": 7204,
+  "songs_with_lyrics": 5146,
   "songs_with_structure": 653,
   "tag_traction": {
     "electrotango": {
@@ -702,7 +702,7 @@
     },
     "only": {
       "avg_likes": 6.08,
-      "count": 100,
+      "count": 101,
       "max_likes": 61
     },
     "swedish": {
@@ -4271,8 +4271,8 @@
       "max_likes": 13
     },
     "dance-pop": {
-      "avg_likes": 10.45,
-      "count": 51,
+      "avg_likes": 10.2,
+      "count": 54,
       "max_likes": 57
     },
     "witty": {
@@ -17846,8 +17846,8 @@
       "max_likes": 1
     },
     "one": {
-      "avg_likes": 7.75,
-      "count": 73,
+      "avg_likes": 7.73,
+      "count": 74,
       "max_likes": 158
     },
     "picture": {
@@ -18146,8 +18146,8 @@
       "max_likes": 0
     },
     "choose": {
-      "avg_likes": 53.67,
-      "count": 3,
+      "avg_likes": 41.75,
+      "count": 4,
       "max_likes": 104
     },
     "forgive": {
@@ -18316,8 +18316,8 @@
       "max_likes": 1
     },
     "your": {
-      "avg_likes": 8.12,
-      "count": 24,
+      "avg_likes": 8.04,
+      "count": 25,
       "max_likes": 104
     },
     "bars": {
@@ -18461,8 +18461,8 @@
       "max_likes": 5
     },
     "i'm": {
-      "avg_likes": 41.0,
-      "count": 4,
+      "avg_likes": 34.0,
+      "count": 5,
       "max_likes": 104
     },
     "deal": {
@@ -32721,8 +32721,8 @@
       "max_likes": 0
     },
     "feelings": {
-      "avg_likes": 19.67,
-      "count": 3,
+      "avg_likes": 16.25,
+      "count": 4,
       "max_likes": 57
     },
     "style: romantic pop • emotional pop • melodic trap • 2009 nostalgia\nbpm: 104\nkey": {
@@ -47346,8 +47346,8 @@
       "max_likes": 8
     },
     "character": {
-      "avg_likes": 11.0,
-      "count": 29,
+      "avg_likes": 10.83,
+      "count": 30,
       "max_likes": 104
     },
     "because": {
@@ -48621,8 +48621,8 @@
       "max_likes": 0
     },
     "electropop": {
-      "avg_likes": 44.61,
-      "count": 59,
+      "avg_likes": 42.74,
+      "count": 62,
       "max_likes": 569
     },
     "reggae-electro fused with french touch and liquid funk at a breezy mid-tempo.": {
@@ -67516,8 +67516,8 @@
       "max_likes": 10
     },
     "wren": {
-      "avg_likes": 25.29,
-      "count": 7,
+      "avg_likes": 22.88,
+      "count": 8,
       "max_likes": 104
     },
     "snarl": {
@@ -93411,8 +93411,8 @@
       "max_likes": 8
     },
     "round": {
-      "avg_likes": 9.29,
-      "count": 14,
+      "avg_likes": 9.07,
+      "count": 15,
       "max_likes": 57
     },
     "replaying": {
@@ -199296,8 +199296,8 @@
       "max_likes": 7
     },
     "coin": {
-      "avg_likes": 18.5,
-      "count": 4,
+      "avg_likes": 16.0,
+      "count": 5,
       "max_likes": 57
     },
     "noise-channel": {
@@ -206491,38 +206491,38 @@
       "max_likes": 1
     },
     "select": {
-      "avg_likes": 80.5,
-      "count": 2,
+      "avg_likes": 55.67,
+      "count": 3,
       "max_likes": 104
     },
     "cpu": {
-      "avg_likes": 80.5,
-      "count": 2,
+      "avg_likes": 55.67,
+      "count": 3,
       "max_likes": 104
     },
     "entertainment": {
-      "avg_likes": 57.0,
-      "count": 1,
+      "avg_likes": 31.5,
+      "count": 2,
       "max_likes": 57
     },
     "cooked": {
-      "avg_likes": 57.0,
-      "count": 1,
+      "avg_likes": 31.5,
+      "count": 2,
       "max_likes": 57
     },
     "platform": {
-      "avg_likes": 57.0,
-      "count": 1,
+      "avg_likes": 31.5,
+      "count": 2,
       "max_likes": 57
     },
     "insert": {
-      "avg_likes": 244.0,
-      "count": 2,
+      "avg_likes": 164.67,
+      "count": 3,
       "max_likes": 431
     },
     "continue": {
-      "avg_likes": 57.0,
-      "count": 1,
+      "avg_likes": 31.5,
+      "count": 2,
       "max_likes": 57
     },
     "male high baritone with tender close-mic verses and restrained chanted hook": {
@@ -214957,9 +214957,9 @@
       "best_tier": "medium"
     },
     "intro|verse|pre-chorus|chorus|verse|chorus|bridge|hook": {
-      "count": 25,
-      "avg_line_count": 77.8,
-      "avg_rhyme_density": 0.343,
+      "count": 26,
+      "avg_line_count": 77.4,
+      "avg_rhyme_density": 0.345,
       "best_tier": "viral"
     },
     "intro|verse|chorus|break|bridge|break|verse|chorus": {

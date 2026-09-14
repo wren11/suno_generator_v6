@@ -89,7 +89,7 @@ Hard stop. No fade.
 
 - **Dual-Engine Architecture**:
   - **Scansion-LM**: Causal language transformer trained on structured lyrics, rhythmic pockets, and song section flow.
-  - **SongwritingReferenceModel**: Statistical inference engine analyzing 7,154 tracks, tag co-occurrence matrices, and viral momentum.
+  - **SongwritingReferenceModel**: Statistical inference engine analyzing 7,204 tracks, tag co-occurrence matrices, and viral momentum.
 - **Calibrated 3K & 5K Suno Studio V6 Payloads**:
   - **3K Mode**: Calibrated to **2,995–2,998 characters** ($\le 3,000$) for radio edits.
   - **5K Mode**: Calibrated to **4,965–4,990 characters** ($\le 5,000$) for extended cinematic arrangements.
@@ -112,9 +112,9 @@ Hard stop. No fade.
 
 | Metric | Value |
 | :--- | :--- |
-| **Catalog Songs Database** | **7,154 tracks** (`dist/models/suno_song_catalog.json`) |
-| **Songs with Full Scansion Lyrics** | **5,096 tracks** |
-| **Analyzed Tag Affinity Pairs** | **42,048 tag associations** |
+| **Catalog Songs Database** | **7,204 tracks** (`dist/models/suno_song_catalog.json`) |
+| **Songs with Full Scansion Lyrics** | **5,146 tracks** |
+| **Analyzed Tag Affinity Pairs** | **42,179 tag associations** |
 | **Expanded Lyrics Training Corpus** | **25,751 records** (`dist/corpus/suno_lyrics_corpus.jsonl`) |
 | **Total Words in Training Corpus** | **2,785,007 words** |
 | **Unique Songwriting Vocabulary** | **61,814 words** |
