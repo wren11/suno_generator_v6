@@ -159,13 +159,28 @@ trainer.bat @wren
 trainer.bat created
 ```
 
-### 4. Run the Web Interface Locally
+### 4. Auto-Train on Live Suno Trending Feed (`auto_train.bat`)
+Continuously monitors `https://suno.com/explore/feed/trending`, tracks already processed songs in `auto_train_processed.json`, detects new songs, downloads audio, transcribes lyrics with Whisper, updates the catalog, and retrains the inference model automatically:
+```cmd
+# Run with default 30-second recheck interval:
+auto_train.bat
+
+# Run with custom 10-second recheck interval:
+auto_train.bat --recheck 10
+# (or simply pass the number):
+auto_train.bat 10
+
+# Run a single detection and training sweep:
+auto_train.bat --once
+```
+
+### 5. Run the Web Interface Locally
 ```cmd
 python app.py
 ```
 Open `http://127.0.0.1:7860` in your web browser.
 
-### 5. Deploy Live to Hugging Face Spaces
+### 6. Deploy Live to Hugging Face Spaces
 ```cmd
 deploy_space.bat
 ```
