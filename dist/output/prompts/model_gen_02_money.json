@@ -1,0 +1,24 @@
+{
+  "title": "money",
+  "style_of_music": "money, guitar, rock, melodic, bpm, dynamic, piano, max, vocals, bass, solo, emotional, rap",
+  "exclude": "low quality, muddy mix, off-key vocals, robotic cadence",
+  "lyrics": "[Verse]\nBreak the pretty lies\nYet the dawn keeps giving, day by day\nEvery scar said you will stay\nSo I laughed and let it play\n\n[Pre Chorus]\nIf the world moves on\nI move with it\nIf the night gets long\nI get stronger for money\n\n[Chorus]\nmoney\nI never run out\nmoney\nKeep on turning, forever learning\n\n[Verse]\nI woke up with the same old name\nBut the mirror learned a longer flame\nTook a train past my second goodbye\nStill chasing money under verse 4 sky\n\n[Pre Chorus]\nIf the world moves on\nI move with it\nIf the night gets long\nI get stronger for money\n\n[Chorus]\nmoney\nI never run out\nmoney\nKeep on turning, forever learning",
+  "suggested_structure": [
+    "verse",
+    "pre-chorus",
+    "chorus",
+    "verse",
+    "pre-chorus",
+    "chorus"
+  ],
+  "sample_opening_lines": [
+    "Break the pretty lies",
+    "Now hold on just a second there, Hoppel. Put down that sweet tea and listen close. You’re sittin' there starin' at those"
+  ],
+  "theme": "money",
+  "confidence": 1.0,
+  "based_on_songs": 7018,
+  "songs_with_lyrics": 4968,
+  "negative_prompt": "low quality, muddy mix, off-key vocals, robotic cadence",
+  "paste_ready": "TITLE\nmoney\n\nSTYLE\nmoney, guitar, rock, melodic, bpm, dynamic, piano, max, vocals, bass, solo, emotional, rap\n\nEXCLUDE\nlow quality, muddy mix, off-key vocals, robotic cadence\n\nLYRICS\n[Verse]\nBreak the pretty lies\nYet the dawn keeps giving, day by day\nEvery scar said you will stay\nSo I laughed and let it play\n\n[Pre Chorus]\nIf the world moves on\nI move with it\nIf the night gets long\nI get stronger for money\n\n[Chorus]\nmoney\nI never run out\nmoney\nKeep on turning, forever learning\n\n[Verse]\nI woke up with the same old name\nBut the mirror learned a longer flame\nTook a train past my second goodbye\nStill chasing money under verse 4 sky\n\n[Pre Chorus]\nIf the world moves on\nI move with it\nIf the night gets long\nI get stronger for money\n\n[Chorus]\nmoney\nI never run out\nmoney\nKeep on turning, forever learning\n"
+}

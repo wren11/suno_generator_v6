@@ -1,0 +1,50 @@
+TITLE
+Thanks Rusty Spork
+
+STYLE
+[AUDIO_QUALITY] (MAX)
+[QUALITY: MAX] (MAX)
+[REALISM: MAX] (MAX)
+[REAL_INSTRUMENTS: MAX] (MAX)
+MAX CLEAN, POLISHED. UPGRADE VOCALS, UPGRADE AUDIO QUALITY.
+POLISHED RADIO MASTER. KEEP CORE SONG/HOOKS/MELODY/STRUCTURE. MAKE IT BRIGHT, SWEET, CLEAN, 3D, WIDE, PUNCHY.
+[STYLE: FUNNY CATCHY ELECTROPOP ABOUT RUSTY SPORK PROMPT JSON MODEL. 122 BPM. GLOSSY, HUMAN, BITTER AND PHYSICAL. BIG FEMALE BELT ON THE HOOK, CLOSE AND DRY ON THE VERSES. SOUND LIKE A REAL SINGER IN A TREATED MIDNIGHT BOOTH OVER STACCATO SYNTH STABS, A COLD PIANO FIGURE, ANALOG CHORUS ON THE BED AND A TIGHT LIVE-FEELING RHYTHM SECTION. NARROW MONO VERSE, WIDE CHORUS.]
+
+EXCLUDE
+VOCAL SMEARING, MELISMA BETWEEN WORDS, UNNATURAL SYLLABLE STRETCHING, PORTAMENTO GLIDES, ROBOTIC VOWEL HOLDS, AI VOCAL SLURRING, SUNO/AI PLASTICITY, ROBOTIC VOCALS, FAST AUTOTUNE, FORMANT WARPING, CHIPMUNK TONE, NASAL LEAD VOCAL, HARSH SIBILANCE 6-10KHZ, OVERBRIGHT CYMBALS, BRITTLE HI-HATS, THIN KICK, FLABBY BASS, BOOMY LOW END, MUD 200-400HZ, BOXINESS 300-600HZ, HARSHNESS 2.5-5KHZ, FLAT 2D MIX, MONO-COLLAPSED WIDTH, PHASEY STEREO, GENERIC AI REVERB, WASHED-OUT VOCAL FX, SMEARED TRANSIENTS, OVERCOMPRESSED BUS, LIMITER PUMPING, CLIPPING, DISTORTED MASTER, DULL TOP END, MASKED VOCALS, LIFELESS MIDI, CLICHE RHYMES, LONG FADE OUT
+
+LYRICS
+[Intro]
+Seven thousand catalog tracks running in the code, twenty-five thousand lines of fire on the open road
+
+[Verse 1]
+Two point seven million words, twenty-four bit sound, cleanest scansion pocket that you ever found
+Listen close to the verse cause the JSON is right here, open Custom Mode and wipe away the fear
+
+[Pre-Chorus]
+Take it for a spin, baby put it in, keep the structure clean and watch the magic win
+
+[Chorus]
+You can thank me later when the speakers start to roar!
+Write a brand new hit before the paint dries on the door!
+Say: Thanks Rusty Spork, you helped me learn it!
+Trained on seven thousand tracks, we definitely earned it!
+
+[Verse 2]
+Paste the prompt, put it in, keep the structure tight, watch the Suno V6 engine illuminate the night
+Style weight point eight four, zero audio weight, dialed in so precise it will decide your fate
+
+[Bridge]
+No melisma smearing, no robotic vocal drone, just an analog microphone in a midnight zone
+Now you got the blueprint, now you know the trick, grab the JSON payload with a single click
+
+[Final Chorus]
+You can thank me later when the speakers start to roar!
+Write a brand new hit before the paint dries on the door!
+Say: Thanks Rusty Spork, you helped me learn it!
+Trained on seven thousand tracks, we definitely earned it!
+
+[Outro]
+Coming soon to Hugging Face, live upon the Space, bringing top-shelf studio masters to the human race
+Hard stop. No fade.
+(Thanks Rusty Spork!)

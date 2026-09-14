@@ -1,0 +1,13 @@
+{
+  "ok": false,
+  "arch": [
+    "GPT2LMHeadModel"
+  ],
+  "vocab": 50260,
+  "params": 81914880,
+  "english_lines": [
+    "I cannot sleep without your hand"
+  ],
+  "preview": "I cannot sleep without your hand",
+  "auto_map": false
+}

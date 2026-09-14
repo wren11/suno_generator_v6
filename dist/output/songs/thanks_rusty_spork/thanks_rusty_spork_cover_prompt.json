@@ -1,0 +1,15 @@
+{
+  "title": "Thanks Rusty Spork",
+  "theme": "funny catchy electropop about rusty spork prompt json model",
+  "style_aesthetic": "Cinematic funny catchy electropop about rusty spork prompt json model album artwork, moody studio lighting, 35mm film photography, Kodak Portra 800 tone",
+  "prompt": "Album cover for song 'Thanks Rusty Spork', aesthetic of funny catchy electropop about rusty spork prompt json model. Hyper-detailed portrait of a confident female pop star in a dark neon-lit studio booth, subtle velvet shadows, film grain, atmospheric smoke, cyan and magenta backlight, expensive high-fashion styling, shot on Hasselblad H6D-100c, 8k resolution, minimalist modern typography layout.",
+  "negative_prompt": "cartoon, illustration, 3d render, anime, blurry, low resolution, amateur, watermark, signature",
+  "aspect_ratio": "1:1",
+  "color_palette": [
+    "#0F0D15",
+    "#E8175D",
+    "#474747",
+    "#363636",
+    "#CC527A"
+  ]
+}

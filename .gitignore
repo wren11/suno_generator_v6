@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+.suno_repl_history
+.venv/
+env/
+venv/
+.DS_Store
+Thumbs.db
+*.mp4
+*.m4a
+*.mp3
+*.wav
+*.flac
+.hf_token

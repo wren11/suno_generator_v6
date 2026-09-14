@@ -1,0 +1,50 @@
+# Generated from SongwritingReferenceModel
+# trained_at=2026-09-14T04:43:40.811064+00:00
+# songs_used=7019 with_lyrics=4969 structures=641
+# confidence=1.0
+
+TITLE
+love
+
+STYLE
+love, guitar, rock, melodic, bpm, dynamic, piano, max, vocals, bass, solo, emotional, rap
+
+EXCLUDE
+low quality, muddy mix, off-key vocals, robotic cadence
+
+LYRICS
+[Verse]
+ФЛЕШМОБ «НЕДЕЛЬНЫЙ ТРЕК» 🎤🌀✨
+Yet the dawn keeps giving, day by day
+Every scar said you will stay
+So I laughed and let it play
+
+[Pre Chorus]
+If the world moves on
+I move with it
+If the night gets long
+I get stronger for love
+
+[Chorus]
+love
+I never run out
+love
+Keep on turning, forever learning
+
+[Verse]
+I woke up with the same old name
+But the mirror learned a longer flame
+Took a train past my second goodbye
+Still chasing love under verse 4 sky
+
+[Pre Chorus]
+If the world moves on
+I move with it
+If the night gets long
+I get stronger for love
+
+[Chorus]
+love
+I never run out
+love
+Keep on turning, forever learning

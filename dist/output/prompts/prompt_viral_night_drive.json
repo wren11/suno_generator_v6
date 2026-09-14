@@ -1,0 +1,21 @@
+{
+  "title": "viral night drive",
+  "style_of_music": "drive, night, viral, guitar, rock, melodic, bpm, dynamic, piano, max, vocals, bass, solo, emotional",
+  "exclude": "low quality, muddy mix, off-key vocals, robotic cadence",
+  "lyrics": "[Verse]\nI woke up with the same old name\nBut the mirror learned a longer flame\nTook a train past my second goodbye\nStill chasing viral night drive under verse 1 sky\n\n[Pre Chorus]\nIf the world moves on\nI move with it\nIf the night gets long\nI get stronger for viral night drive\n\n[Chorus]\nviral night drive\nI never run out\nviral night drive\nKeep on turning, forever learning\n\n[Verse]\nI woke up with the same old name\nBut the mirror learned a longer flame\nTook a train past my second goodbye\nStill chasing viral night drive under verse 4 sky\n\n[Pre Chorus]\nIf the world moves on\nI move with it\nIf the night gets long\nI get stronger for viral night drive\n\n[Chorus]\nviral night drive\nI never run out\nviral night drive\nKeep on turning, forever learning",
+  "suggested_structure": [
+    "verse",
+    "pre-chorus",
+    "chorus",
+    "verse",
+    "pre-chorus",
+    "chorus"
+  ],
+  "sample_opening_lines": [],
+  "theme": "viral night drive",
+  "confidence": 1.0,
+  "based_on_songs": 7019,
+  "songs_with_lyrics": 4969,
+  "negative_prompt": "low quality, muddy mix, off-key vocals, robotic cadence",
+  "paste_ready": "TITLE\nviral night drive\n\nSTYLE\ndrive, night, viral, guitar, rock, melodic, bpm, dynamic, piano, max, vocals, bass, solo, emotional\n\nEXCLUDE\nlow quality, muddy mix, off-key vocals, robotic cadence\n\nLYRICS\n[Verse]\nI woke up with the same old name\nBut the mirror learned a longer flame\nTook a train past my second goodbye\nStill chasing viral night drive under verse 1 sky\n\n[Pre Chorus]\nIf the world moves on\nI move with it\nIf the night gets long\nI get stronger for viral night drive\n\n[Chorus]\nviral night drive\nI never run out\nviral night drive\nKeep on turning, forever learning\n\n[Verse]\nI woke up with the same old name\nBut the mirror learned a longer flame\nTook a train past my second goodbye\nStill chasing viral night drive under verse 4 sky\n\n[Pre Chorus]\nIf the world moves on\nI move with it\nIf the night gets long\nI get stronger for viral night drive\n\n[Chorus]\nviral night drive\nI never run out\nviral night drive\nKeep on turning, forever learning\n"
+}

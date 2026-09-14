@@ -1,0 +1,21 @@
+{
+  "title": "rock, garage rock, post-genre, sex drugs and sheep dogs",
+  "style_of_music": "dogs, sheep, drugs, sex, post-genre, garage, guitar, rock, melodic, bpm, dynamic, piano, max, vocals",
+  "exclude": "low quality, muddy mix, off-key vocals, robotic cadence",
+  "lyrics": "[Verse]\nI woke up with the same old name\nBut the mirror learned a longer flame\nTook a train past my second goodbye\nStill chasing rock, garage rock, post-genre, sex under verse 1 sky\n\n[Pre Chorus]\nIf the world moves on\nI move with it\nIf the night gets long\nI get stronger for rock, garage rock, post-genre, sex\n\n[Chorus]\nrock, garage rock, post-genre, sex\nI never run out\nrock, garage rock, post-genre, sex\nKeep on turning, forever learning\n\n[Verse]\nI woke up with the same old name\nBut the mirror learned a longer flame\nTook a train past my second goodbye\nStill chasing rock, garage rock, post-genre, sex under verse 4 sky\n\n[Pre Chorus]\nIf the world moves on\nI move with it\nIf the night gets long\nI get stronger for rock, garage rock, post-genre, sex\n\n[Chorus]\nrock, garage rock, post-genre, sex\nI never run out\nrock, garage rock, post-genre, sex\nKeep on turning, forever learning",
+  "suggested_structure": [
+    "verse",
+    "pre-chorus",
+    "chorus",
+    "verse",
+    "pre-chorus",
+    "chorus"
+  ],
+  "sample_opening_lines": [],
+  "theme": "rock, garage rock, post-genre, sex drugs and sheep dogs",
+  "confidence": 1.0,
+  "based_on_songs": 7019,
+  "songs_with_lyrics": 4969,
+  "negative_prompt": "low quality, muddy mix, off-key vocals, robotic cadence",
+  "paste_ready": "TITLE\nrock, garage rock, post-genre, sex drugs and sheep dogs\n\nSTYLE\ndogs, sheep, drugs, sex, post-genre, garage, guitar, rock, melodic, bpm, dynamic, piano, max, vocals\n\nEXCLUDE\nlow quality, muddy mix, off-key vocals, robotic cadence\n\nLYRICS\n[Verse]\nI woke up with the same old name\nBut the mirror learned a longer flame\nTook a train past my second goodbye\nStill chasing rock, garage rock, post-genre, sex under verse 1 sky\n\n[Pre Chorus]\nIf the world moves on\nI move with it\nIf the night gets long\nI get stronger for rock, garage rock, post-genre, sex\n\n[Chorus]\nrock, garage rock, post-genre, sex\nI never run out\nrock, garage rock, post-genre, sex\nKeep on turning, forever learning\n\n[Verse]\nI woke up with the same old name\nBut the mirror learned a longer flame\nTook a train past my second goodbye\nStill chasing rock, garage rock, post-genre, sex under verse 4 sky\n\n[Pre Chorus]\nIf the world moves on\nI move with it\nIf the night gets long\nI get stronger for rock, garage rock, post-genre, sex\n\n[Chorus]\nrock, garage rock, post-genre, sex\nI never run out\nrock, garage rock, post-genre, sex\nKeep on turning, forever learning\n"
+}
