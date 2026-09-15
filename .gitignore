@@ -24,3 +24,33 @@ suno_token.txt
 platform_data/
 create_progress/
 
+# Output directories (keep folder structure via .gitkeep, ignore generated songs and media)
+output/songs/*
+!output/songs/.gitkeep
+output/covers/*
+!output/covers/.gitkeep
+output/prompts/*
+!output/prompts/.gitkeep
+output/payloads_3k/*
+!output/payloads_3k/.gitkeep
+output/payloads_5k/*
+!output/payloads_5k/.gitkeep
+output/audio/*
+!output/audio/.gitkeep
+output/transcripts/*
+!output/transcripts/.gitkeep
+
+dist/output/songs/*
+!dist/output/songs/.gitkeep
+dist/output/covers/*
+!dist/output/covers/.gitkeep
+dist/output/prompts/*
+!dist/output/prompts/.gitkeep
+dist/output/payloads_3k/*
+!dist/output/payloads_3k/.gitkeep
+dist/output/payloads_5k/*
+!dist/output/payloads_5k/.gitkeep
+dist/output/audio/*
+!dist/output/audio/.gitkeep
+dist/output/transcripts/*
+!dist/output/transcripts/.gitkeep
