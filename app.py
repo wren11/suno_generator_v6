@@ -27,6 +27,21 @@ try:
 except Exception:
     pass
 
+# Backward compatibility shim for Starlette >= 0.38 TemplateResponse with Gradio 4.x
+try:
+    import starlette.templating
+    _orig_template_response = starlette.templating.Jinja2Templates.TemplateResponse
+    def _safe_template_response(self, *args, **kwargs):
+        if args and isinstance(args[0], str):
+            name = args[0]
+            context = args[1] if len(args) > 1 else kwargs.get("context", {})
+            req = context.get("request") if isinstance(context, dict) else kwargs.get("request")
+            return _orig_template_response(self, request=req, name=name, context=context)
+        return _orig_template_response(self, *args, **kwargs)
+    starlette.templating.Jinja2Templates.TemplateResponse = _safe_template_response
+except Exception:
+    pass
+
 import gradio as gr
 
 # Prevent TypeError in gradio_client json_schema_to_python_type when additionalProperties is bool

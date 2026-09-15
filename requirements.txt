@@ -1,5 +1,7 @@
 # Core dependencies for Suno Generator (Local & Hugging Face Space)
 gradio>=4.44.1
+starlette<0.38.0
+fastapi<0.113.0
 pydantic<2.9.0
 huggingface_hub>=0.23.0,<0.26.0
 faster-whisper>=1.0.0
