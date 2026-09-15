@@ -29,6 +29,28 @@ except Exception:
 
 import gradio as gr
 
+# Prevent TypeError in gradio_client json_schema_to_python_type when additionalProperties is bool
+try:
+    import gradio_client.utils
+    _orig_get_type = gradio_client.utils.get_type
+    def _safe_get_type(schema):
+        if not isinstance(schema, dict):
+            return "Any"
+        return _orig_get_type(schema)
+    gradio_client.utils.get_type = _safe_get_type
+
+    _orig_json_schema = gradio_client.utils._json_schema_to_python_type
+    def _safe_json_schema(schema, defs=None):
+        if not isinstance(schema, dict):
+            return "Any"
+        try:
+            return _orig_json_schema(schema, defs)
+        except Exception:
+            return "Any"
+    gradio_client.utils._json_schema_to_python_type = _safe_json_schema
+except Exception:
+    pass
+
 from src.downloader import SunoSongDownloader
 from src.inference import SongwritingReferenceModel
 from src.keywords import ENGLISH_SEED_KEYWORDS
@@ -412,4 +434,8 @@ with gr.Blocks(theme=hf_theme, css=hf_css, title="Suno AI Song Generator & Refer
     )
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.queue().launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        show_api=False,
+    )
