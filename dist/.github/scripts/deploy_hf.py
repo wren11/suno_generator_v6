@@ -14,16 +14,12 @@ def main() -> int:
         return 1
 
     custom_space = os.environ.get("CUSTOM_SPACE", "").strip()
-    github_repo = os.environ.get("GITHUB_REPO", "wren11/suno_generator_v6").strip()
 
-    # Determine space repo id
+    # Target Hugging Face Space
     if custom_space:
         repo_id = custom_space
-    elif "/" in github_repo:
-        user = github_repo.split("/")[0]
-        repo_id = f"{user}/suno-generator-v6"
     else:
-        repo_id = "wren11/suno-generator-v6"
+        repo_id = "wren11ws/suno_prompt_generator_v6"
 
     print("=" * 60)
     print("  HUGGING FACE SPACES DEPLOYMENT")

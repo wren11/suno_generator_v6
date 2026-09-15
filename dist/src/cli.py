@@ -140,7 +140,7 @@ def cmd_song(args: argparse.Namespace) -> int:
     if bundle.get("cover_png"):
         print(f"\n[+] Album Cover (PNG): {bundle['cover_png']}")
     if bundle.get("teaser_video"):
-        print(f"[+] 10s Video Teaser:  {bundle['teaser_video']} (1080x1080 MP4)")
+        print(f"[+] 10s Video Teaser:  {bundle['teaser_video']} (1080p Ultra HD 60fps MP4)")
     return 0
 
 

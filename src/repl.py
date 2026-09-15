@@ -238,7 +238,7 @@ class SunoReplHarness(cmd.Cmd):
         if bundle.get("cover_png"):
             print(f"  Cover Art (PNG): {bundle['cover_png']}")
         if bundle.get("teaser_video"):
-            print(f"  Teaser Video:    {bundle['teaser_video']} (10s 1080x1080 MP4)")
+            print(f"  Teaser Video:    {bundle['teaser_video']} (10s 1080p Ultra HD 60fps MP4)")
         print("=" * 65)
 
     def do_wizard(self, arg: str) -> None:

@@ -10,9 +10,9 @@ on:
   workflow_dispatch:
     inputs:
       space_name:
-        description: "Hugging Face Space repo (e.g. wren11/suno-generator-v6)"
+        description: "Hugging Face Space repo (e.g. wren11ws/suno_prompt_generator_v6)"
         required: false
-        default: ""
+        default: "wren11ws/suno_prompt_generator_v6"
 
 jobs:
   deploy:

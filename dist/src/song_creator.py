@@ -1414,6 +1414,7 @@ def create_complete_song_bundle(
             image_prompt=image_prompt or cover_prompt["prompt"],
             out_dir=song_dir,
             slug=slug,
+            p3k=p3k,
         )
         cover_png = str(cover_res["png_path"])
         cover_jpg = str(cover_res["jpg_path"])
@@ -1543,6 +1544,10 @@ def main() -> int:
     parser.add_argument("--lyrics-file", "-lf", type=str, default="", help="Path to custom lyrics file (optional)")
     parser.add_argument("--lipogram", type=str, default="", help="Lipogram constraint letter (e.g. 'e')")
     parser.add_argument("--engine", type=str, default="llm", choices=("llm", "hybrid", "reference", "dynamic"), help="Inference engine")
+    parser.add_argument("--text", "-tx", type=str, default="", help="Custom text overlay on artwork")
+    parser.add_argument("--ref", "-r", type=str, default="", help="Reference base image URL or local file path")
+    parser.add_argument("--image-prompt", "-ip", type=str, default="", help="Custom AI diffusion visual prompt")
+    parser.add_argument("--no-video", action="store_true", help="Skip rendering 10s teaser video")
     args = parser.parse_args()
 
     # Support reading from stdin if theme is '-'
@@ -1555,6 +1560,10 @@ def main() -> int:
         theme=theme_text,
         vocal_gender=args.vocal,
         bpm=args.bpm,
+        custom_text=args.text,
+        reference_image_url=args.ref,
+        image_prompt=args.image_prompt,
+        render_video=not args.no_video,
         out_dir=args.out_dir,
         lyrics=args.lyrics,
         lyrics_file=args.lyrics_file,
