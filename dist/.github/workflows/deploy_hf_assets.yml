@@ -1,0 +1,61 @@
+name: Deploy Datasets & Models to Hugging Face
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'corpus/**'
+      - 'models/**'
+      - 'foundry/export/**'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "What to deploy (all, dataset, model)"
+        required: false
+        default: "all"
+        type: choice
+        options:
+          - all
+          - dataset
+          - model
+      dataset_repo:
+        description: "Hugging Face Dataset repo id"
+        required: false
+        default: "wren11ws/suno_lyrics_scansion_corpus"
+      model_repo:
+        description: "Hugging Face Model repo id"
+        required: false
+        default: "wren11ws/suno_scansion_lm"
+
+jobs:
+  deploy_assets:
+    name: Deploy Datasets & Models to HF
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Install Deployment Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "huggingface_hub>=0.23.0,<0.26.0"
+
+      - name: Deploy to Hugging Face Hub
+        env:
+          HFKEY: ${{ secrets.HFKEY }}
+          DEPLOY_TARGET: ${{ github.event.inputs.target || 'all' }}
+          DATASET_REPO: ${{ github.event.inputs.dataset_repo || 'wren11ws/suno_lyrics_scansion_corpus' }}
+          MODEL_REPO: ${{ github.event.inputs.model_repo || 'wren11ws/suno_scansion_lm' }}
+        run: |
+          python .github/scripts/deploy_hf_assets.py
