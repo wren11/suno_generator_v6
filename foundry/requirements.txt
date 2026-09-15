@@ -1,0 +1,6 @@
+torch>=2.4.0
+transformers>=4.44.0
+tokenizers>=0.20.0
+safetensors>=0.4.0
+huggingface-hub>=0.24.0
+numpy>=1.26.0

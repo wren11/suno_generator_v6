@@ -1,0 +1,13 @@
+{
+  "ok": false,
+  "arch": [
+    "GPT2LMHeadModel"
+  ],
+  "vocab": 50257,
+  "params": 81912576,
+  "english_lines": [
+    "If you can't get it done and I don\u2019t know what to do then why cannot we not? If only a day could come the way before me"
+  ],
+  "preview": "If you can't get it done and I don\u2019t know what to do then why cannot we not? If only a day could come the way before me",
+  "auto_map": false
+}

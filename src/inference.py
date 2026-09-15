@@ -139,12 +139,17 @@ class SongwritingReferenceModel:
     def train_from_catalog(self, catalog: SongCatalogStore) -> int:
         from src.features import compute_lyric_stats
 
-        records = catalog.all_records()
+        records = sorted(
+            catalog.all_records(),
+            key=lambda r: (int(r.external_like_count or 0), int(r.play_count or 0)),
+            reverse=True,
+        )
         tag_traction: dict[str, list[int]] = defaultdict(list)
         style_co: Counter[str] = Counter()
         tier_tags: dict[str, Counter[str]] = defaultdict(Counter)
         structures: dict[str, list[dict]] = defaultdict(list)
         openings: dict[str, list[str]] = defaultdict(list)
+        hooks: dict[str, list[str]] = defaultdict(list)
         novel: Counter[str] = Counter()
 
         for rec in records:
@@ -184,10 +189,26 @@ class SongwritingReferenceModel:
                 lines = [
                     ln.strip()
                     for ln in rec.lyrics.splitlines()
-                    if ln.strip() and not _STRUCTURE_RE.match(ln)
+                    if ln.strip()
                 ]
-                if lines:
-                    openings[tier].append(lines[0][:120])
+                # Opening line
+                for ln in lines:
+                    if not _STRUCTURE_RE.match(ln) and self._usable_opening_line(ln):
+                        if ln not in openings[tier] and len(openings[tier]) < 60:
+                            openings[tier].append(ln[:140])
+                        break
+
+                # Hooks / chorus lines from viral and high tier tracks
+                in_hook_block = False
+                for ln in lines:
+                    if re.search(r"\[(chorus|hook)", ln, re.I):
+                        in_hook_block = True
+                        continue
+                    elif ln.startswith("["):
+                        in_hook_block = False
+                    elif in_hook_block and not ln.startswith("(") and len(ln) > 12:
+                        if self._usable_opening_line(ln) and ln not in hooks[tier] and len(hooks[tier]) < 60:
+                            hooks[tier].append(ln[:140])
 
         tag_scores = {}
         for tag, likes_list in tag_traction.items():
@@ -219,10 +240,53 @@ class SongwritingReferenceModel:
                 if v
             },
             "tier_tag_counts": {tier: dict(cnt.most_common(40)) for tier, cnt in tier_tags.items()},
-            "lyric_openings": {tier: samples[:20] for tier, samples in openings.items()},
+            "lyric_openings": {tier: samples[:50] for tier, samples in openings.items()},
+            "lyric_hooks": {tier: samples[:50] for tier, samples in hooks.items()},
             "novel_keywords": dict(novel.most_common(80)),
         }
         return len(records)
+
+    def get_top_viral_openings(self, genre: str = "", limit: int = 10) -> list[str]:
+        """Return top learned opening lines from viral and high tier tracks in the catalog."""
+        openings: list[str] = []
+        for tier in ("viral", "high", "medium"):
+            tier_lines = (self._state.get("lyric_openings") or {}).get(tier) or []
+            for ln in tier_lines:
+                if ln not in openings:
+                    openings.append(ln)
+        return openings[:limit]
+
+    def get_top_hooks(self, genre: str = "", limit: int = 10) -> list[str]:
+        """Return top learned chorus/hook lines from viral and high tier tracks in the catalog."""
+        hooks: list[str] = []
+        for tier in ("viral", "high", "medium"):
+            tier_lines = (self._state.get("lyric_hooks") or {}).get(tier) or []
+            for ln in tier_lines:
+                if ln not in hooks:
+                    hooks.append(ln)
+        return hooks[:limit]
+
+    def get_high_traction_tags(self, theme_keywords: list[str] | None = None, limit: int = 5) -> list[str]:
+        """Return top performing tags matching prompt keywords or highest-performing globally."""
+        tag_traction = self._state.get("tag_traction") or {}
+        if not tag_traction:
+            return []
+        if theme_keywords:
+            matched = [
+                (tok, tag_traction[tok].get("avg_likes", 0))
+                for tok in theme_keywords
+                if tok in tag_traction
+            ]
+            matched.sort(key=lambda x: -x[1])
+            if matched:
+                return [m[0].upper() for m in matched[:limit]]
+        ranked = sorted(
+            tag_traction.items(),
+            key=lambda x: (x[1].get("avg_likes", 0), x[1].get("count", 0)),
+            reverse=True,
+        )
+        return [t.upper() for t, _ in ranked[:limit]]
+
 
     def suggest_style_pack(self, *, tier: str = "high", n: int = 12) -> StyleSuggestion:
         tier_tags = (self._state.get("tier_tag_counts") or {}).get(tier) or {}

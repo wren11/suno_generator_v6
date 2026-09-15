@@ -1,0 +1,18 @@
+[project]
+name = "scansion-lm"
+version = "1.0.0"
+description = "Hugging Face causal LM that writes original lyric lines for Suno Custom Mode, trained on structural song extracts."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "torch>=2.4.0",
+  "transformers>=4.44.0",
+  "tokenizers>=0.20.0",
+  "safetensors>=0.4.0",
+]
+
+[project.urls]
+Homepage = "https://huggingface.co/scansion-lm"
+
+[tool.setuptools.packages.find]
+include = ["scansion_lm*"]

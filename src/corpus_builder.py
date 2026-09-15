@@ -65,10 +65,77 @@ def parse_song_sections(lyrics: str) -> list[tuple[str, list[str]]]:
     return sections
 
 
+def append_song_to_corpus(
+    title: str,
+    lyrics: str,
+    style: str = "",
+    corpus_paths: list[str | Path] | None = None,
+) -> int:
+    """Incrementally append a newly generated or trained song into the corpus JSONL files."""
+    if not lyrics or len(lyrics.strip()) < 30:
+        return 0
+
+    title = (title or "Suno Track").strip()
+    style_clean = (style or "Pop").strip()[:140]
+
+    records = []
+    # 1. Full song sheet format
+    sheet_prompt = f"{BOS_BRIEF}\nTitle: {title}\nStyle: {style_clean}\n{BOS_SHEET}\n"
+    sheet_full = f"{sheet_prompt}{lyrics.strip()}\n{EOS}"
+    records.append({
+        "prompt": sheet_prompt,
+        "text": sheet_full,
+        "title": title,
+        "style": style_clean,
+        "kind": "full_sheet",
+        "char_len": len(sheet_full),
+    })
+
+    # 2. Section continuations
+    sections = parse_song_sections(lyrics)
+    for sec_name, lines in sections:
+        if not lines:
+            continue
+        sec_text = "\n".join(lines[:14])
+        sec_prompt = f"Title: {title}\nIdea: {style_clean}\n{sec_name}:\n"
+        sec_full = f"{sec_prompt}{sec_text}"
+        records.append({
+            "prompt": sec_prompt,
+            "text": sec_full,
+            "title": title,
+            "style": style_clean,
+            "section": sec_name,
+            "kind": "section_continuation",
+            "lines_count": len(lines),
+            "char_len": len(sec_full),
+        })
+
+    if corpus_paths is None:
+        corpus_paths = [
+            Path("corpus/suno_lyrics_corpus.jsonl"),
+            Path("dist/corpus/suno_lyrics_corpus.jsonl"),
+            Path("foundry/data/corpus.jsonl"),
+            Path("dist/foundry/data/corpus.jsonl"),
+        ]
+
+    count = 0
+    for cp in corpus_paths:
+        p = Path(cp)
+        try:
+            p.parent.mkdir(parents=True, exist_ok=True)
+            with open(p, "a", encoding="utf-8") as f:
+                for r in records:
+                    f.write(json.dumps(r, ensure_ascii=False) + "\n")
+            count += len(records)
+        except Exception:
+            pass
+    return count
+
+
 def build_massive_corpus(
-    catalog_path: str | Path = "dist/models/suno_song_catalog.json",
-    out_jsonl: str | Path = "dist/corpus/suno_lyrics_corpus.jsonl",
-    foundry_corpus_jsonl: str | Path = "C:/Users/Dean/Downloads/sadLUMBWP5nexOWh-grok-workspace/foundry/data/corpus.jsonl",
+    catalog_path: str | Path = "models/suno_song_catalog.json",
+    out_jsonl: str | Path = "corpus/suno_lyrics_corpus.jsonl",
+    foundry_corpus_jsonl: str | Path = "foundry/data/corpus.jsonl",
 ) -> dict[str, Any]:
     """Extract full scansion sheets, section continuations, and metatags from all 7k+ songs."""
     catalog_path = Path(catalog_path)

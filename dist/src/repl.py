@@ -37,9 +37,14 @@ BANNER = r"""
   ___) | |_| | |\  | |_| | | |_| | |___| |\  | |___|  _ < / ___ \| || |_| |  _ < 
  |____/ \___/|_| \_|\___/   \____|_____|_| \_|_____|_| \_/_/   \_\_| \___/|_| \_\
 
-  Suno AI Songwriting Reference Model & Interactive REPL Harness v1.0
+  Suno AI Studio V6 Song Generator & Guided Media Engine
 ======================================================================
-  Type 'help' or '?' to list commands. Type 'gen' to create a hit song prompt.
+  🧙 Type 'wizard'   - Step-by-step guided creator (holds your hand!)
+  🎵 Type 'song'     - Create complete hit song + cover art + 10s video
+  🔥 Type 'trending' - Fetch live Suno.com explore hits or train model
+  💡 Type 'suggest'  - Real-time style suggestions from live catalog
+  ❓ Type 'help'     - View all interactive commands
+======================================================================
 """
 
 
@@ -49,9 +54,9 @@ class SunoReplHarness(cmd.Cmd):
 
     def __init__(
         self,
-        catalog_path: str | Path = "dist/models/suno_song_catalog.json",
-        inference_path: str | Path = "dist/models/suno_song_inference_model.json",
-        prompts_dir: str | Path = "dist/output/prompts",
+        catalog_path: str | Path = "models/suno_song_catalog.json",
+        inference_path: str | Path = "models/suno_song_inference_model.json",
+        prompts_dir: str | Path = "output/prompts",
     ) -> None:
         super().__init__()
         self.catalog_path = Path(catalog_path)
@@ -70,6 +75,7 @@ class SunoReplHarness(cmd.Cmd):
         self.catalog = SongCatalogStore(self.catalog_path)
         self.model = SongwritingReferenceModel(self.inference_path)
 
+
     def do_stats(self, arg: str) -> None:
         """Display dataset, vocabulary, and inference model statistics."""
         print(self.catalog.format_stats_report())
@@ -87,7 +93,7 @@ class SunoReplHarness(cmd.Cmd):
         theme = "dark glam electropop"
         title = ""
         gender = "f"
-        engine = "hybrid"
+        engine = "llm"
         mode = "3k"
         assets = False
 
@@ -144,28 +150,60 @@ class SunoReplHarness(cmd.Cmd):
     def do_song(self, arg: str) -> None:
         """Create a FULL NEW SONG bundle with 3k & 5k JSON payloads, LRC, brief, and cover prompt.
         Usage: song [theme] [--title "Song Title"] [--gender f|m] [--bpm 122]
-        Example: song "cyberpunk bass rage" --title "Neon Guillotine" --gender f
+        Example: song "cyberpunk bass rage" --title "Silicon Guillotine" --gender f
         """
         from src.song_creator import create_complete_song_bundle
 
         parts = shlex.split(arg) if arg.strip() else []
         theme = "dark glam electropop, cold radio pop"
-        title = "New Name on the Door"
-        gender = "f"
+        title = ""
+        gender = ""
         bpm = 122
+        lyrics = ""
+        lyrics_file = None
+        lipogram = ""
+        engine = "llm"
+        custom_text = ""
+        ref_url = ""
+        image_prompt = ""
+        render_video = True
 
         i = 0
         theme_parts = []
         while i < len(parts):
             p = parts[i]
-            if p == "--title" and i + 1 < len(parts):
+            if p in ("--title", "-t") and i + 1 < len(parts):
                 title = parts[i + 1]
                 i += 2
-            elif p == "--gender" and i + 1 < len(parts):
+            elif p in ("--gender", "--vocal", "-v") and i + 1 < len(parts):
                 gender = parts[i + 1].lower()
                 i += 2
-            elif p == "--bpm" and i + 1 < len(parts):
+            elif p in ("--bpm", "-b") and i + 1 < len(parts):
                 bpm = int(parts[i + 1])
+                i += 2
+            elif p in ("--text", "-tx") and i + 1 < len(parts):
+                custom_text = parts[i + 1]
+                i += 2
+            elif p in ("--ref", "-r") and i + 1 < len(parts):
+                ref_url = parts[i + 1]
+                i += 2
+            elif p in ("--image-prompt", "-ip") and i + 1 < len(parts):
+                image_prompt = parts[i + 1]
+                i += 2
+            elif p in ("--no-video",):
+                render_video = False
+                i += 1
+            elif p in ("--lyrics", "-l") and i + 1 < len(parts):
+                lyrics = parts[i + 1]
+                i += 2
+            elif p in ("--lyrics-file", "-lf") and i + 1 < len(parts):
+                lyrics_file = parts[i + 1]
+                i += 2
+            elif p in ("--lipogram",) and i + 1 < len(parts):
+                lipogram = parts[i + 1]
+                i += 2
+            elif p in ("--engine",) and i + 1 < len(parts):
+                engine = parts[i + 1].lower()
                 i += 2
             else:
                 theme_parts.append(p)
@@ -178,7 +216,15 @@ class SunoReplHarness(cmd.Cmd):
             theme=theme,
             vocal_gender=gender,
             bpm=bpm,
-            out_dir=self.prompts_dir.parent / "songs",
+            custom_text=custom_text,
+            reference_image_url=ref_url,
+            image_prompt=image_prompt,
+            render_video=render_video,
+            out_dir=Path("output/songs"),
+            lyrics=lyrics,
+            lyrics_file=lyrics_file,
+            lipogram=lipogram,
+            engine=engine,
         )
         print("\n" + "=" * 65)
         print(f"  3K SUNO STUDIO V6 JSON PAYLOAD ({bundle['len_3k']:,} characters)")
@@ -189,6 +235,104 @@ class SunoReplHarness(cmd.Cmd):
         print("=" * 65)
         print(json.dumps(bundle["payload_5k"], indent=2, ensure_ascii=False))
         print("=" * 65)
+        if bundle.get("cover_png"):
+            print(f"  Cover Art (PNG): {bundle['cover_png']}")
+        if bundle.get("teaser_video"):
+            print(f"  Teaser Video:    {bundle['teaser_video']} (10s 1080x1080 MP4)")
+        print("=" * 65)
+
+    def do_wizard(self, arg: str) -> None:
+        """Launch the step-by-step guided wizard that holds your hand through full song creation."""
+        from src.wizard import run_guided_wizard
+        run_guided_wizard(out_dir=Path("output/songs"), engine="llm")
+
+    def do_trending(self, arg: str) -> None:
+        """Fetch live trending songs from Suno.com explore feed and optionally retrain model.
+        Usage: trending [--train]
+        """
+        from src.downloader import SunoSongDownloader
+        from src.trainer import train_from_trending
+
+        if "--train" in arg or "train" in arg:
+            train_from_trending(catalog_path=self.catalog_path, inference_path=self.inference_path)
+            self.catalog = SongCatalogStore(self.catalog_path)
+            self.model = SongwritingReferenceModel(self.inference_path)
+            return
+
+        dl = SunoSongDownloader()
+        clips = dl.fetch_unified_feed(feed_id="trending", page_size=20, max_items=10)
+        print("\n" + "=" * 65)
+        print("  🔥 LIVE SUNO.COM TRENDING HITS")
+        print("=" * 65)
+        for idx, c in enumerate(clips[:10], start=1):
+            title = str(c.get("title") or "Untitled")
+            upvotes = c.get("upvote_count") or 0
+            plays = c.get("play_count") or 0
+            meta = c.get("metadata") if isinstance(c.get("metadata"), dict) else {}
+            tags = str(meta.get("tags") or c.get("tags") or "Pop")
+            print(f"[{idx}] {title}")
+            print(f"    Tags:    {tags[:70]}")
+            print(f"    Likes:   {upvotes:,} | Plays: {plays:,}")
+            print(f"    Link:    https://suno.com/song/{c.get('id')}")
+            print("-" * 65)
+        print("\nTip: Type 'trending --train' to automatically ingest these tracks and retrain your local model!\n")
+
+    def do_cover(self, arg: str) -> None:
+        """Create custom 1024x1024 album cover art with custom typography overlay.
+        Usage: cover "Song Title" [--genre kpop] [--text "Custom Text"] [--ref "http://..."]
+        """
+        parts = shlex.split(arg) if arg.strip() else []
+        if not parts:
+            print("Usage: cover \"Song Title\" [--genre kpop] [--text \"Custom Text\"] [--ref \"http://...\"]")
+            return
+        title = parts[0]
+        genre = "pop"
+        custom_text = ""
+        ref_url = ""
+        i = 1
+        while i < len(parts):
+            if parts[i] in ("--genre", "-g") and i + 1 < len(parts):
+                genre = parts[i + 1]
+                i += 2
+            elif parts[i] in ("--text", "-t") and i + 1 < len(parts):
+                custom_text = parts[i + 1]
+                i += 2
+            elif parts[i] in ("--ref", "-r") and i + 1 < len(parts):
+                ref_url = parts[i + 1]
+                i += 2
+            else:
+                i += 1
+        from src.cover_studio import create_song_cover
+        res = create_song_cover(title, genre=genre, custom_text=custom_text, reference_image_url=ref_url, out_dir=Path("output/covers"))
+        print(f"[+] Cover PNG: {res['png_path']}")
+        print(f"[+] Cover JPG: {res['jpg_path']}")
+
+    def do_video(self, arg: str) -> None:
+        """Render 10-second animated video teaser (1080x1080 MP4) from cover art.
+        Usage: video <cover_png_path> [--title "Song Title"] [--bpm 128]
+        """
+        parts = shlex.split(arg) if arg.strip() else []
+        if not parts:
+            print("Usage: video <cover_png_path> [--title \"Song Title\"] [--bpm 128]")
+            return
+        cover_path = Path(parts[0])
+        title = "Song Teaser"
+        bpm = 122
+        i = 1
+        while i < len(parts):
+            if parts[i] in ("--title", "-t") and i + 1 < len(parts):
+                title = parts[i + 1]
+                i += 2
+            elif parts[i] in ("--bpm", "-b") and i + 1 < len(parts):
+                bpm = int(parts[i + 1])
+                i += 2
+            else:
+                i += 1
+        from src.cover_studio import generate_10s_teaser_video
+        out_vid = cover_path.parent / f"{cover_path.stem}_teaser_10s.mp4"
+        vid = generate_10s_teaser_video(cover_path, out_vid, bpm=bpm, title=title)
+        if vid:
+            print(f"[+] 10-Second Teaser Video Created: {vid}")
 
     def do_gen(self, arg: str) -> None:
         """Alias for generate."""
@@ -197,7 +341,7 @@ class SunoReplHarness(cmd.Cmd):
     def do_generate(self, arg: str) -> None:
         """Generate a Suno Custom-mode ready prompt seed.
         Usage: generate [theme] [--tier viral|high|medium|low] [--title "Song Title"]
-        Example: generate "midnight neon drive" --tier viral
+        Example: generate "midnight highway drive" --tier viral
         """
         parts = shlex.split(arg) if arg.strip() else []
         theme = "viral night drive"
@@ -238,7 +382,7 @@ class SunoReplHarness(cmd.Cmd):
     def do_batch(self, arg: str) -> None:
         """Generate multiple prompts in batch.
         Usage: batch <count> [themes separated by comma]
-        Example: batch 5 "love, money, heartbreak, neon highway, cyberpunk club"
+        Example: batch 5 "love, money, heartbreak, high-speed highway, cyberpunk club"
         """
         parts = shlex.split(arg)
         if not parts:
@@ -348,16 +492,25 @@ class SunoReplHarness(cmd.Cmd):
         line = line.lstrip("\ufeff\xef\xbb\xbf \t\r\n")
         if line.startswith("ï»¿"):
             line = line[3:]
+        # Automatically strip accidentally pasted prompt prefixes (e.g. 'suno> song ...', 'suno> suno> song ...')
+        line = re.sub(r"^(suno\s*>|suno:|suno\b|>|\s)+\s*", "", line, flags=re.I).strip()
         return super().parseline(line)
 
     def precmd(self, line: str) -> str:
         line = line.lstrip("\ufeff\xef\xbb\xbf \t\r\n")
         if line.startswith("ï»¿"):
             line = line[3:]
-        cleaned = line.strip()
+        cleaned = re.sub(r"^(suno\s*>|suno:|suno\b|>|\s)+\s*", "", line, flags=re.I).strip()
         if cleaned:
             self.cmd_history.append(cleaned)
         return cleaned
+
+    def default(self, line: str) -> None:
+        clean = re.sub(r"^(suno\s*>|suno:|suno\b|>|\s)+\s*", "", line, flags=re.I).strip()
+        if clean and clean != line.strip():
+            self.onecmd(clean)
+            return
+        super().default(line)
 
     def postloop(self) -> None:
         if readline:
@@ -431,10 +584,10 @@ class SunoReplHarness(cmd.Cmd):
         from src.downloader import SunoSongDownloader
         from src.transcriber import SunoAudioTranscriber
 
-        dl = SunoSongDownloader(output_dir="dist/output/audio")
+        dl = SunoSongDownloader(output_dir="output/audio")
         song = dl.fetch_song(target, download_audio=True)
         if song.downloaded_audio_path:
-            tr = SunoAudioTranscriber(transcripts_dir="dist/output/transcripts")
+            tr = SunoAudioTranscriber(transcripts_dir="output/transcripts")
             res = tr.transcribe(song.downloaded_audio_path, song_id=song.song_id)
             print("\n--- TRANSCRIBED LYRICS ---\n")
             print(res["lyrics"])
@@ -474,18 +627,18 @@ def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(description="Suno REPL Harness")
-    parser.add_argument("--catalog", default="dist/models/suno_song_catalog.json")
-    parser.add_argument("--inference", default="dist/models/suno_song_inference_model.json")
-    parser.add_argument("--prompts-dir", default="dist/output/prompts")
+    parser.add_argument("--catalog", default="models/suno_song_catalog.json")
+    parser.add_argument("--inference", default="models/suno_song_inference_model.json")
+    parser.add_argument("--prompts-dir", default="output/prompts")
     args = parser.parse_args()
 
     # If running from inside dist/, adjust default paths
     cat = Path(args.catalog)
     inf = Path(args.inference)
-    if not cat.exists() and Path("models/suno_song_catalog.json").exists():
-        cat = Path("models/suno_song_catalog.json")
-    if not inf.exists() and Path("models/suno_song_inference_model.json").exists():
-        inf = Path("models/suno_song_inference_model.json")
+    if not cat.exists() and Path("dist/models/suno_song_catalog.json").exists():
+        cat = Path("dist/models/suno_song_catalog.json")
+    if not inf.exists() and Path("dist/models/suno_song_inference_model.json").exists():
+        inf = Path("dist/models/suno_song_inference_model.json")
 
     app = SunoReplHarness(catalog_path=cat, inference_path=inf, prompts_dir=args.prompts_dir)
     try:

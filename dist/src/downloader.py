@@ -229,6 +229,45 @@ class SunoSongDownloader:
         print(f"[+] Total clips fetched for @{clean_handle}: {len(clips)}")
         return clips
 
+    def fetch_unified_feed(
+        self,
+        feed_id: str = "trending",
+        page_size: int = 50,
+        max_items: int = 100,
+    ) -> list[dict]:
+        """Fetch live trending or new hit tracks directly from Suno's unified feed API."""
+        url = "https://studio-api-prod.suno.com/api/unified/feed"
+        clips: list[dict] = []
+        seen_ids: set[str] = set()
+
+        payload = {
+            "feed_id": feed_id,
+            "cursor": None,
+            "page_size": page_size,
+        }
+        req = urllib.request.Request(
+            url,
+            headers={"User-Agent": _USER_AGENT, "Content-Type": "application/json"},
+            data=json.dumps(payload).encode("utf-8"),
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                items = data.get("feed", {}).get("items", [])
+                for it in items:
+                    ci = it.get("content_item") or it.get("clip") or {}
+                    cid = str(ci.get("id") or "").lower().strip()
+                    if cid and cid not in seen_ids:
+                        seen_ids.add(cid)
+                        clips.append(ci)
+                        if len(clips) >= max_items:
+                            break
+        except Exception as e:
+            print(f"[!] Error fetching unified feed {feed_id}: {e}")
+
+        print(f"[+] Total clips fetched from unified feed '{feed_id}': {len(clips)}")
+        return clips
+
     def _download_file(self, url: str, dest: Path) -> None:
         req = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
         with urllib.request.urlopen(req, timeout=30) as resp, open(dest, "wb") as fh:

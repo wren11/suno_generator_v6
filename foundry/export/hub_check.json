@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "arch": [
+    "GPT2LMHeadModel"
+  ],
+  "vocab": 50257,
+  "params": 81912576,
+  "english_lines": [
+    "I was on the road with my face down and I could not make it back for me",
+    "The ceiling made a mockery of you every time I tried"
+  ],
+  "preview": "I was on the road with my face down and I could not make it back for me\nThe ceiling made a mockery of you every time I tried\n",
+  "auto_map": false
+}

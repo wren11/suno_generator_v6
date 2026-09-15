@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="8" fill="#C2412D"/>
+  <g fill="none" stroke="#F4EAD8" stroke-width="0.9" opacity="0.36" stroke-linecap="square">
+    <path d="M6 12h20"/>
+    <path d="M6 16.2h20"/>
+    <path d="M6 20.4h20"/>
+  </g>
+  <text
+    x="15.5"
+    y="22.8"
+    text-anchor="middle"
+    font-family="Georgia, 'Palatino Linotype', 'Times New Roman', serif"
+    font-size="19"
+    font-style="italic"
+    font-weight="700"
+    fill="#FFF7F2"
+  >S</text>
+  <rect x="11.2" y="6.3" width="10.8" height="1.7" rx="0.7" fill="#F3D2A8"/>
+</svg>

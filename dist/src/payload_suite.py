@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from src.anti_cliche import purge_ai_cliches, AI_CLICHE_NEGATIVE_TAGS
+
 import json
 import math
 import random
@@ -108,7 +110,7 @@ ARCHETYPES = [
     },
     {
         "name": "cyberpunk_bass_rage",
-        "title": "Neon Guillotine",
+        "title": "Silicon Guillotine",
         "theme": "HEAVY CYBERPUNK BASS RAGE / AGGRESSIVE INDUSTRIAL TRAP",
         "bpm": 140,
         "vocal_gender": "m",
@@ -117,7 +119,7 @@ ARCHETYPES = [
             "Sever the cable, sever the vein",
             "Running high voltage straight into the brain",
             "Chrome in the bone, fire in the screen",
-            "Bow down to the neon guillotine",
+            "Bow down to the silicon guillotine",
         ],
         "verses": [
             "Sub-level zero where the acid rain pools / Synthetic emperors and silicon fools",
@@ -126,7 +128,7 @@ ARCHETYPES = [
             "Radar detects another thermal alert / Breathing in carbon and electrical dirt",
             "Overclocked heart in a titanium cage / Forty-eight gigabytes of digital rage",
             "Tear down the firewall, shatter the glass / They built this citadel to never let us pass",
-            "Optical implants burning neon blue / None of these holograms are looking at you",
+            "Optical implants burning cobalt blue / None of these holograms are looking at you",
             "System rebooting at forty percent / Every last credit we had has been spent",
         ],
         "pre": [
@@ -144,12 +146,12 @@ ARCHETYPES = [
         "extended_lines": [
             "Plasma exhaust cutting through the grey mist / Digital handcuffs around every wrist",
             "Spitting out venom in binary code / We are the glitch at the end of the road",
-            "Rebar and neon collapsing tonight / Blinded by pure electroluminescent light",
-            "Drop the distortion, ignite the fuse / When you have nothing left that you can lose",
+            "Rebar and girder collapsing tonight / Blinded by pure high-voltage light",
+            "Drop the distortion, trigger the fuse / When you have nothing left that you can lose",
         ],
     },
     {
-        "name": "neon_synthwave_highway",
+        "name": "analog_synthwave_highway",
         "title": "Midnight Velocity",
         "theme": "RETRO SYNTHWAVE / 80S OUTRUN / MIDNIGHT HIGHWAY CRUISE",
         "bpm": 128,
@@ -186,7 +188,7 @@ ARCHETYPES = [
         "extended_lines": [
             "FM antenna catching the night / Tuned to a phantom frequency bright",
             "White lines blurring into a streak / Hearing the words that we wanted to speak",
-            "Neon reflections on wet boulevard / Guardrails protecting an open heart",
+            "Halogen reflections on wet boulevard / Guardrails protecting an open heart",
             "Sunrise is waiting beyond the bend / A midnight that nobody wants to end",
         ],
     },
@@ -211,7 +213,7 @@ ARCHETYPES = [
             "Count in the rhythm with four on the floor / Kicking wide open the backstage door",
             "Amplifiers hum like a jet on the strip / Tighten your knuckles and steady your grip",
             "Crowd starts pushing against the barricade / We earned every scar that we ever made",
-            "Pick slide echoes across the whole roof / Look at this fire if you need the proof",
+            "Pick slide roaring across the whole roof / Look at this fire if you need the proof",
         ],
         "pre": [
             "Are you ready for the walls to shake?",
@@ -274,11 +276,11 @@ def build_v6_lyrics(arch: dict[str, Any], mode: str = "3k") -> str:
             f"[Solo / Instrumental Breakdown: Live Rhythm Section Build]\n(Guitar & Synth Modulations / Heavy 808 Glides / Dynamic Lift)",
             f"[Pre-Chorus: Final Suspense, Metronome Breath]\n" + "\n".join(pre[:2]),
             f"[Final Chorus: Maximum Energy, Doubled Octaves, Ad-libs]\n" + "\n".join(hook) + "\n" + "\n".join(hook),
-            f"[Outro: Fading Echoes into Heavy Final Strike]\n" + f"{verses[0]}\n{hook[-1]}\nEcho out.\nFinal hard cut.",
+            f"[Outro: Fading Feedback into Heavy Final Strike]\n" + f"{verses[0]}\n{hook[-1]}\nFade out.\nFinal hard cut.",
         ]
 
     lyrics = "\n\n".join(blocks)
-    return lyrics
+    return purge_ai_cliches(lyrics)
 
 
 def generate_payload_from_archetype(arch: dict[str, Any], mode: str = "3k") -> dict[str, Any]:
@@ -315,8 +317,8 @@ def generate_payload_from_archetype(arch: dict[str, Any], mode: str = "3k") -> d
 
 
 def generate_all_payload_suites(
-    out_dir_3k: str | Path = "dist/output/payloads_3k",
-    out_dir_5k: str | Path = "dist/output/payloads_5k",
+    out_dir_3k: str | Path = "output/payloads_3k",
+    out_dir_5k: str | Path = "output/payloads_5k",
 ) -> dict[str, Any]:
     out_dir_3k = Path(out_dir_3k)
     out_dir_5k = Path(out_dir_5k)

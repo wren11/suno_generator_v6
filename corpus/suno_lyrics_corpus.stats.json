@@ -1,0 +1,27 @@
+{
+  "total_records": 25776,
+  "total_words": 2785007,
+  "unique_vocabulary": 61824,
+  "top_sections": {
+    "Verse": 7101,
+    "Chorus": 5101,
+    "Bridge": 1382,
+    "Outro": 1037,
+    "Intro": 753,
+    "Breakdown": 527,
+    "Male": 166,
+    "Pre-Chorus": 157
+  },
+  "top_genres": {
+    "rap": 306,
+    "emotional": 168,
+    "male vocals": 153,
+    "pop": 141,
+    "tape saturation": 132,
+    "piano": 105,
+    "acoustic": 101,
+    "raw": 99,
+    "cinematic": 97,
+    "trap": 96
+  }
+}

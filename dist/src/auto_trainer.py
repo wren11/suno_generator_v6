@@ -332,30 +332,29 @@ class SunoTargetMonitor:
         songs: list[dict[str, Any]] = []
         seen_ids: set[str] = set()
 
-        # Strategy 1: Suno Explore / Trending Top Songs Playlist
+        # Strategy 1: Suno Unified Feed API (live explore & trending hits)
         try:
-            req = urllib.request.Request(_EXPLORE_PLAYLIST_URL, headers={"User-Agent": self.user_agent})
-            with urllib.request.urlopen(req, timeout=12) as resp:
-                pdata = json.loads(resp.read().decode("utf-8"))
-                clips = pdata.get("playlist_clips") or []
-                for item in clips:
-                    c = item.get("clip") or {}
-                    cid = str(c.get("id") or "").lower().strip()
-                    if cid and cid not in seen_ids:
-                        seen_ids.add(cid)
-                        songs.append({
-                            "id": cid,
-                            "url": f"https://suno.com/song/{cid}",
-                            "title": c.get("title") or "Untitled Track",
-                            "artist": c.get("display_name") or c.get("handle") or "Unknown",
-                            "handle": c.get("handle") or "",
-                            "tags": c.get("metadata", {}).get("tags") or "",
-                            "play_count": c.get("play_count") or 0,
-                            "like_count": c.get("upvote_count") or 0,
-                            "source": "explore_playlist",
-                        })
+            from src.downloader import SunoSongDownloader
+            dl = SunoSongDownloader()
+            clips = dl.fetch_unified_feed(feed_id="trending", page_size=50, max_items=50)
+            for c in clips:
+                cid = str(c.get("id") or "").lower().strip()
+                if cid and cid not in seen_ids:
+                    seen_ids.add(cid)
+                    meta = c.get("metadata") if isinstance(c.get("metadata"), dict) else {}
+                    songs.append({
+                        "id": cid,
+                        "url": f"https://suno.com/song/{cid}",
+                        "title": c.get("title") or "Untitled Track",
+                        "artist": c.get("display_name") or c.get("handle") or "Unknown",
+                        "handle": c.get("handle") or "",
+                        "tags": meta.get("tags") or c.get("tags") or "",
+                        "play_count": c.get("play_count") or 0,
+                        "like_count": c.get("upvote_count") or c.get("like_count") or 0,
+                        "source": "unified_feed_trending",
+                    })
         except Exception as ex:
-            print(f"[!] Warning: Explore playlist API check encountered: {ex}")
+            print(f"[!] Warning: Unified feed check encountered: {ex}")
 
         # Strategy 2: Direct scrape of target feed URL
         try:
@@ -398,10 +397,10 @@ class SunoAutoTrainer:
         self,
         target: str = _DEFAULT_FEED_URL,
         recheck_interval: int = 30,
-        catalog_path: str | Path = "dist/models/suno_song_catalog.json",
-        inference_path: str | Path = "dist/models/suno_song_inference_model.json",
-        audio_dir: str | Path = "dist/output/audio",
-        transcripts_dir: str | Path = "dist/output/transcripts",
+        catalog_path: str | Path = "models/suno_song_catalog.json",
+        inference_path: str | Path = "models/suno_song_inference_model.json",
+        audio_dir: str | Path = "output/audio",
+        transcripts_dir: str | Path = "output/transcripts",
         whisper_model: str = "base",
         hf_token: str | None = None,
         max_songs_per_check: int = 0,
@@ -417,7 +416,7 @@ class SunoAutoTrainer:
         self.max_songs_per_check = max_songs_per_check
 
         self.tracker = AutoTrainTracker(
-            state_path="dist/models/auto_train_processed.json",
+            state_path="models/auto_train_processed.json",
             catalog_path=self.catalog_path,
         )
         self.monitor = SunoTargetMonitor()
@@ -580,26 +579,26 @@ def parse_args() -> argparse.Namespace:
         "--catalog",
         "-c",
         type=str,
-        default="dist/models/suno_song_catalog.json",
-        help="Path to song catalog JSON",
+        default="models/suno_song_catalog.json",
+        help="Path to catalog JSON",
     )
     parser.add_argument(
         "--inference",
         "-i",
         type=str,
-        default="dist/models/suno_song_inference_model.json",
+        default="models/suno_song_inference_model.json",
         help="Path to inference model JSON",
     )
     parser.add_argument(
         "--audio-dir",
         type=str,
-        default="dist/output/audio",
+        default="output/audio",
         help="Directory to save downloaded audio streams",
     )
     parser.add_argument(
         "--transcripts-dir",
         type=str,
-        default="dist/output/transcripts",
+        default="output/transcripts",
         help="Directory to save transcribed lyrics",
     )
     parser.add_argument(

@@ -1,0 +1,45 @@
+name: Deploy to Hugging Face Spaces
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      space_name:
+        description: "Hugging Face Space repo (e.g. wren11/suno-generator-v6)"
+        required: false
+        default: ""
+
+jobs:
+  deploy:
+    name: Deploy to Hugging Face Spaces
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Install Deployment Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install huggingface_hub
+
+      - name: Deploy to Hugging Face
+        env:
+          HFKEY: ${{ secrets.HFKEY }}
+          CUSTOM_SPACE: ${{ github.event.inputs.space_name }}
+          GITHUB_REPO: ${{ github.repository }}
+        run: |
+          python .github/scripts/deploy_hf.py

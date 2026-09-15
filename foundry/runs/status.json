@@ -1,0 +1,8 @@
+{
+  "phase": "idle",
+  "training": false,
+  "trained": true,
+  "server": "127.0.0.1:8099",
+  "serve_pid": 18952,
+  "updated_at": 1789457117.9959402
+}

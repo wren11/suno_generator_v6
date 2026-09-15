@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from src.anti_cliche import purge_ai_cliches, AI_CLICHE_NEGATIVE_TAGS
+
 import json
 import os
 import random
@@ -19,9 +21,10 @@ if hasattr(sys.stderr, "reconfigure"):
 
 # Candidate model directories
 CANDIDATE_PATHS = [
+    Path(__file__).resolve().parent.parent / "foundry" / "export",
     Path(__file__).resolve().parent.parent / "models" / "scansion_lm",
     Path(__file__).resolve().parent.parent / "dist" / "models" / "scansion_lm",
-    Path(r"C:\Users\Dean\Downloads\sadLUMBWP5nexOWh-grok-workspace\foundry\export"),
+    Path(r"C:\Users\Dean\Downloads\xDShw9eTm1BCUj5a-grok-workspace\dist\foundry\export"),
     Path("models/scansion_lm"),
 ]
 
@@ -38,6 +41,7 @@ STUDIO_AUDIO_QUALITY_HEADER = (
 
 # Standard Suno Master Negative Tags (prevents AI artifacts, mud, phasing, cliches)
 DEFAULT_STUDIO_NEGATIVE_TAGS = (
+    AI_CLICHE_NEGATIVE_TAGS + ", " +
     "VOCAL SMEARING, MELISMA BETWEEN WORDS, UNNATURAL SYLLABLE STRETCHING, "
     "PORTAMENTO GLIDES BETWEEN WORDS, SLOPPY LEGATO WORD CONNECTIONS, PITCH DRIFT, "
     "ROBOTIC VOWEL HOLDS, AI VOCAL SLURRING, UNCLEAR WORD ENDS, MUSHY DICTION, "
@@ -55,7 +59,7 @@ DEFAULT_STUDIO_NEGATIVE_TAGS = (
 )
 
 _BANNED_WORDS_RE = re.compile(
-    r"twitter|wikipedia|http|www\.|subscribe|click here|looking forward to the game|"
+    r"neon|tapestry|echoes|whispers|ignite|labyrinth|beacon|abyss|ethereal|celestial|kaleidoscope|cacophony|intertwined|ember|ephemeral|unfurl|unveil|nexus|testament|resonate|uncharted|illuminate|delve|chrysalis|transcend|twitter|wikipedia|http|www\.|subscribe|click here|looking forward to the game|"
     r"custom version|\.com\b|youtube|facebook",
     re.I,
 )
@@ -119,6 +123,15 @@ class ScansionLLM:
         if self.tok.pad_token_id is None:
             self.tok.pad_token = self.tok.eos_token or "<|endoftext|>"
         self.model.eval()
+
+        try:
+            from src.hardware import optimize_model_for_hardware, get_hardware_info
+            self.model = optimize_model_for_hardware(self.model)
+            hw = get_hardware_info()
+            print(f"[+] Scansion-LM hardware acceleration: {hw['summary']}")
+        except Exception as ex:
+            print(f"[!] Info: Scansion-LM hardware fallback: {ex}")
+
         self._loaded = True
         print("[+] Scansion-LM loaded successfully.")
 
@@ -131,9 +144,12 @@ class ScansionLLM:
     ) -> str:
         self.load()
         import torch
+        from src.hardware import get_optimal_device
 
+        device = get_optimal_device()
         enc = self.tok(prompt, return_tensors="pt")
-        prompt_len = enc.input_ids.shape[1]
+        enc = {k: v.to(device) for k, v in enc.items()}
+        prompt_len = enc["input_ids"].shape[1]
         eos = self.tok.eos_token_id or self.tok.pad_token_id
 
         gen_kw: dict = {
@@ -149,8 +165,9 @@ class ScansionLLM:
         else:
             gen_kw.update(do_sample=False)
 
+        raw_model = self.model.module if hasattr(self.model, "module") else self.model
         with torch.no_grad():
-            out = self.model.generate(**enc, **gen_kw)
+            out = raw_model.generate(**enc, **gen_kw)
         new = self.tok.decode(out[0][prompt_len:], skip_special_tokens=False)
         for sp in ("<|endoftext|>", "<|end|>", "<|sheet|>", "<|brief|>"):
             if sp in new:
@@ -164,7 +181,10 @@ class ScansionLLM:
         kind: str,
         n_lines: int = 4,
     ) -> list[str]:
-        prompt = f"Title: {title}\nIdea: {idea}\n{kind}:\n"
+        clean_idea = re.sub(r"\[[^\]]+\]", "", idea)
+        clean_idea = re.sub(r"\([^)]*max[^)]*\)", "", clean_idea, flags=re.I)
+        clean_idea = re.sub(r"\s+", " ", clean_idea).strip()[:100]
+        prompt = f"Title: {title}\nIdea: {clean_idea}\n{kind}:\n"
         lines: list[str] = []
         for t in (0.75, 0.85, 0.95):
             curr_prompt = prompt if not lines else prompt + "\n".join(lines) + "\n"

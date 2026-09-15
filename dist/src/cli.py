@@ -62,7 +62,7 @@ def cmd_v6(args: argparse.Namespace) -> int:
             theme=resolved_theme,
             vocal_gender=args.vocal,
             bpm=args.bpm,
-            out_dir="dist/output/songs",
+            out_dir="output/songs",
         )
         print("\n--- 3K SUNO STUDIO V6 JSON PAYLOAD ---\n")
         print(json.dumps(bundle["payload_3k"], indent=2, ensure_ascii=False))
@@ -101,17 +101,35 @@ def cmd_song(args: argparse.Namespace) -> int:
     from src.song_creator import create_complete_song_bundle
 
     resolved_theme = (getattr(args, "pos_theme", "") or getattr(args, "theme", "") or "dark glam electropop, cold radio pop, cinematic dance-pop").strip()
-    resolved_title = (getattr(args, "title", "") or "New Name on the Door").strip()
-    vocal = getattr(args, "vocal", "f")
+    resolved_title = (getattr(args, "title", "") or "").strip()
+    vocal = getattr(args, "vocal", "")
     bpm = getattr(args, "bpm", 122)
-    out_dir = getattr(args, "out_dir", "dist/output/songs")
+    artist = getattr(args, "artist", "SUNO STUDIO MASTER")
+    custom_text = getattr(args, "text", "")
+    ref_url = getattr(args, "ref", "")
+    image_prompt = getattr(args, "image_prompt", "")
+    render_video = not getattr(args, "no_video", False)
+    out_dir = getattr(args, "out_dir", "output/songs")
+    lyrics = getattr(args, "lyrics", "")
+    lyrics_file = getattr(args, "lyrics_file", None)
+    lipogram = getattr(args, "lipogram", "")
+    engine = getattr(args, "engine", "llm")
 
     bundle = create_complete_song_bundle(
         title=resolved_title,
         theme=resolved_theme,
         vocal_gender=vocal,
         bpm=bpm,
+        artist=artist,
+        custom_text=custom_text,
+        reference_image_url=ref_url,
+        image_prompt=image_prompt,
+        render_video=render_video,
         out_dir=out_dir,
+        lyrics=lyrics,
+        lyrics_file=lyrics_file,
+        lipogram=lipogram,
+        engine=engine,
     )
     print("\n--- 3K SUNO STUDIO V6 JSON PAYLOAD ---\n")
     print(json.dumps(bundle["payload_3k"], indent=2, ensure_ascii=False))
@@ -119,6 +137,18 @@ def cmd_song(args: argparse.Namespace) -> int:
     print("\n--- 5K EXTENDED STUDIO V6 JSON PAYLOAD ---\n")
     print(json.dumps(bundle["payload_5k"], indent=2, ensure_ascii=False))
     print(f"\n[+] 5K JSON Length: {bundle['len_5k']:,} characters")
+    if bundle.get("cover_png"):
+        print(f"\n[+] Album Cover (PNG): {bundle['cover_png']}")
+    if bundle.get("teaser_video"):
+        print(f"[+] 10s Video Teaser:  {bundle['teaser_video']} (1080x1080 MP4)")
+    return 0
+
+
+def cmd_wizard(args: argparse.Namespace) -> int:
+    """Launch the interactive guided hit song creation wizard."""
+    from src.wizard import run_guided_wizard
+    out_dir = getattr(args, "out_dir", "output/songs")
+    run_guided_wizard(out_dir=out_dir, engine=getattr(args, "engine", "llm"))
     return 0
 
 
@@ -136,7 +166,7 @@ def cmd_payload_suite(args: argparse.Namespace) -> int:
 
 def cmd_generate(args: argparse.Namespace) -> int:
     """Train (optional), then write one or more Suno prompt files from the model."""
-    engine = getattr(args, "engine", "reference")
+    engine = getattr(args, "engine", "llm")
     if engine in ("llm", "hybrid"):
         from src.llm import generate_suno_v6_payload
 
@@ -275,8 +305,8 @@ def cmd_repl(args: argparse.Namespace) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Suno song dataset & inference tools")
-    p.add_argument("--catalog", default="dist/models/suno_song_catalog.json", help="Song catalog JSON path")
-    p.add_argument("--inference", default="dist/models/suno_song_inference_model.json", help="Inference model JSON path")
+    p.add_argument("--catalog", default="models/suno_song_catalog.json", help="Song catalog JSON path")
+    p.add_argument("--inference", default="models/suno_song_inference_model.json", help="Inference model JSON path")
     sub = p.add_subparsers(dest="command")
 
     stats = sub.add_parser("stats", help="Print catalog and model stats")
@@ -292,9 +322,9 @@ def build_parser() -> argparse.ArgumentParser:
     gen.add_argument("--title", default="", help="Optional title override")
     gen.add_argument("--tier", default="high", choices=("low", "medium", "high", "viral"))
     gen.add_argument("--count", type=int, default=1)
-    gen.add_argument("--engine", default="reference", choices=("reference", "hybrid", "llm"), help="Inference engine (reference, hybrid, llm)")
+    gen.add_argument("--engine", default="llm", choices=("llm", "hybrid", "reference"), help="Inference engine (llm, hybrid, reference)")
     gen.add_argument("--vocal", default="f", choices=("f", "m"), help="Vocal gender for LLM/hybrid mode")
-    gen.add_argument("--out-dir", default="dist/output/prompts")
+    gen.add_argument("--out-dir", default="output/prompts")
     gen.add_argument("--retrain", action="store_true", help="Retrain model from catalog first")
     gen.set_defaults(func=cmd_generate)
 
@@ -309,24 +339,37 @@ def build_parser() -> argparse.ArgumentParser:
     v6.add_argument("--weirdness-constraint", type=float, default=0.34, help="Weirdness constraint slider value")
     v6.add_argument("--audio-weight", type=float, default=0.0, help="Audio weight slider value")
     v6.add_argument("--model-version", default="V6", help="Target Suno model version (V6, V5.5, V4)")
-    v6.add_argument("--engine", default="hybrid", choices=("hybrid", "llm", "reference"), help="Generation engine")
+    v6.add_argument("--engine", default="llm", choices=("llm", "hybrid", "reference"), help="Generation engine")
     v6.add_argument("--mode", default="3k", choices=("3k", "5k", "both"), help="Payload length mode (3k, 5k, or both)")
     v6.add_argument("--assets", action="store_true", help="Generate complete asset bundle (prompts, LRC, brief, cover art)")
     v6.add_argument("-o", "--out", default="", help="Optional output JSON filepath")
     v6.set_defaults(func=cmd_v6)
 
     song = sub.add_parser("song", help="Generate a COMPLETE new song with 3k & 5k JSON payloads, LRC, brief, and cover art")
-    song.add_argument("pos_theme", nargs="?", default="", help="Optional theme/genre")
+    song.add_argument("pos_theme", nargs="?", default="", help="Optional theme/genre/prompt")
     song.add_argument("--theme", default="", help="Theme or genre style")
     song.add_argument("--title", default="", help="Song title")
-    song.add_argument("--gender", "--vocal", dest="vocal", default="f", choices=("f", "m"), help="Vocal gender (f or m)")
+    song.add_argument("--artist", default="SUNO STUDIO MASTER", help="Artist name")
+    song.add_argument("--gender", "--vocal", dest="vocal", default="", choices=("", "f", "m"), help="Vocal gender (f or m, defaults to auto-detect)")
     song.add_argument("--bpm", type=int, default=122, help="BPM")
-    song.add_argument("--out-dir", default="dist/output/songs", help="Output directory for song bundle")
+    song.add_argument("--text", default="", help="Custom text overlay to render on cover art")
+    song.add_argument("--ref", default="", help="Base reference image URL (HTTP/HTTPS) for cover art")
+    song.add_argument("--image-prompt", default="", help="Visual image prompt for AI cover art")
+    song.add_argument("--no-video", action="store_true", help="Skip generating the 10-second teaser video")
+    song.add_argument("--out-dir", default="output/songs", help="Output directory for song bundle")
+    song.add_argument("--lyrics", "-l", default="", help="Custom lyrics (optional)")
+    song.add_argument("--lyrics-file", "-lf", default="", help="Path to custom lyrics file (optional)")
+    song.add_argument("--lipogram", default="", help="Lipogram constraint letter (e.g. 'e')")
+    song.add_argument("--engine", default="llm", choices=("llm", "hybrid", "reference", "dynamic"), help="Inference engine")
     song.set_defaults(func=cmd_song)
 
+    wiz = sub.add_parser("wizard", help="Interactive step-by-step Hit Song Creation Wizard")
+    wiz.add_argument("--out-dir", default="output/songs", help="Output directory for generated song bundle")
+    wiz.set_defaults(func=cmd_wizard)
+
     psuite = sub.add_parser("payload-suite", help="Generate complete library of 3k and 5k JSON payloads across 7k song archetypes")
-    psuite.add_argument("--out-3k", default="dist/output/payloads_3k", help="Directory for 3k payloads")
-    psuite.add_argument("--out-5k", default="dist/output/payloads_5k", help="Directory for 5k payloads")
+    psuite.add_argument("--out-3k", default="output/payloads_3k", help="Directory for 3k payloads")
+    psuite.add_argument("--out-5k", default="output/payloads_5k", help="Directory for 5k payloads")
     psuite.set_defaults(func=cmd_payload_suite)
 
     sug = sub.add_parser("suggest", help="Generate style/structure prompt seed from learned data")
@@ -346,12 +389,12 @@ def build_parser() -> argparse.ArgumentParser:
     reb.set_defaults(func=cmd_rebuild)
 
     exj = sub.add_parser("export-jsonl", help="Export catalog to JSONL for ML training")
-    exj.add_argument("-o", "--output", default="dist/output/songs.jsonl")
+    exj.add_argument("-o", "--output", default="output/songs.jsonl")
     exj.add_argument("--min-likes", type=int, default=0)
     exj.set_defaults(func=cmd_export_jsonl)
 
     exc = sub.add_parser("export-csv", help="Export catalog to CSV")
-    exc.add_argument("-o", "--output", default="dist/output/songs.csv")
+    exc.add_argument("-o", "--output", default="output/songs.csv")
     exc.add_argument("--min-likes", type=int, default=0)
     exc.set_defaults(func=cmd_export_csv)
 
@@ -366,8 +409,8 @@ def main() -> int:
     if len(sys.argv) == 1:
         # Default with no arguments: start interactive REPL!
         return cmd_repl(argparse.Namespace(
-            catalog="dist/models/suno_song_catalog.json",
-            inference="dist/models/suno_song_inference_model.json"
+            catalog="models/suno_song_catalog.json",
+            inference="models/suno_song_inference_model.json"
         ))
     args = parser.parse_args()
     if not hasattr(args, "func"):
