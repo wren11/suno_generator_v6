@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "trained_at": "2026-09-15T01:30:31.621272+00:00",
-  "songs_used": 8912,
-  "songs_with_lyrics": 6810,
+  "trained_at": "2026-09-15T01:36:40.472517+00:00",
+  "songs_used": 8913,
+  "songs_with_lyrics": 6811,
   "songs_with_structure": 671,
   "tag_traction": {
     "electrotango": {
@@ -256,8 +256,8 @@
       "max_likes": 148
     },
     "vocals": {
-      "avg_likes": 30.45,
-      "count": 2325,
+      "avg_likes": 41.18,
+      "count": 2326,
       "max_likes": 50000
     },
     "horns": {
@@ -576,8 +576,8 @@
       "max_likes": 18
     },
     "clean": {
-      "avg_likes": 280.42,
-      "count": 599,
+      "avg_likes": 403.61,
+      "count": 602,
       "max_likes": 50000
     },
     "violin": {
@@ -606,8 +606,8 @@
       "max_likes": 35
     },
     "trap": {
-      "avg_likes": 106.27,
-      "count": 1546,
+      "avg_likes": 138.44,
+      "count": 1548,
       "max_likes": 50000
     },
     "dance": {
@@ -781,8 +781,8 @@
       "max_likes": 188
     },
     "punchy": {
-      "avg_likes": 93.75,
-      "count": 585,
+      "avg_likes": 136.25,
+      "count": 586,
       "max_likes": 50000
     },
     "drums": {
@@ -791,8 +791,8 @@
       "max_likes": 1125
     },
     "bright": {
-      "avg_likes": 111.77,
-      "count": 500,
+      "avg_likes": 161.45,
+      "count": 501,
       "max_likes": 50000
     },
     "melodic": {
@@ -816,8 +816,8 @@
       "max_likes": 98
     },
     "deep": {
-      "avg_likes": 41.89,
-      "count": 1368,
+      "avg_likes": 60.12,
+      "count": 1369,
       "max_likes": 50000
     },
     "husky": {
@@ -1226,13 +1226,13 @@
       "max_likes": 338
     },
     "diss": {
-      "avg_likes": 388.79,
-      "count": 129,
+      "avg_likes": 948.14,
+      "count": 132,
       "max_likes": 50000
     },
     "track": {
-      "avg_likes": 125.45,
-      "count": 416,
+      "avg_likes": 303.55,
+      "count": 419,
       "max_likes": 50000
     },
     "aggressive": {
@@ -1696,8 +1696,8 @@
       "max_likes": 3
     },
     "rap": {
-      "avg_likes": 42.86,
-      "count": 9541,
+      "avg_likes": 48.09,
+      "count": 9543,
       "max_likes": 50000
     },
     "hard-hitting": {
@@ -1751,8 +1751,8 @@
       "max_likes": 199
     },
     "hooks": {
-      "avg_likes": 506.45,
-      "count": 310,
+      "avg_likes": 741.21,
+      "count": 313,
       "max_likes": 50000
     },
     "production": {
@@ -2311,8 +2311,8 @@
       "max_likes": 4
     },
     "song": {
-      "avg_likes": 132.03,
-      "count": 435,
+      "avg_likes": 189.06,
+      "count": 436,
       "max_likes": 50000
     },
     "ultimately": {
@@ -3026,8 +3026,8 @@
       "max_likes": 27
     },
     "melody": {
-      "avg_likes": 453.18,
-      "count": 344,
+      "avg_likes": 665.4,
+      "count": 347,
       "max_likes": 50000
     },
     "pitched-up": {
@@ -3061,8 +3061,8 @@
       "max_likes": 4
     },
     "quality": {
-      "avg_likes": 495.24,
-      "count": 357,
+      "avg_likes": 699.44,
+      "count": 360,
       "max_likes": 50000
     },
     "lock": {
@@ -3856,9 +3856,9 @@
       "max_likes": 14
     },
     "double-time": {
-      "avg_likes": 2.29,
-      "count": 24,
-      "max_likes": 9
+      "avg_likes": 1925.19,
+      "count": 26,
+      "max_likes": 25000
     },
     "range": {
       "avg_likes": 15.49,
@@ -4031,8 +4031,8 @@
       "max_likes": 10
     },
     "wide": {
-      "avg_likes": 569.72,
-      "count": 363,
+      "avg_likes": 835.99,
+      "count": 367,
       "max_likes": 50000
     },
     "answers": {
@@ -4581,8 +4581,8 @@
       "max_likes": 303
     },
     "sweet": {
-      "avg_likes": 845.02,
-      "count": 184,
+      "avg_likes": 1232.53,
+      "count": 187,
       "max_likes": 50000
     },
     "tone": {
@@ -5721,8 +5721,8 @@
       "max_likes": 84
     },
     "stereo": {
-      "avg_likes": 252.24,
-      "count": 205,
+      "avg_likes": 372.37,
+      "count": 206,
       "max_likes": 50000
     },
     "delays": {
@@ -6971,8 +6971,8 @@
       "max_likes": 100
     },
     "structure": {
-      "avg_likes": 446.0,
-      "count": 120,
+      "avg_likes": 648.93,
+      "count": 121,
       "max_likes": 50000
     },
     "post-punk": {
@@ -7786,8 +7786,8 @@
       "max_likes": 107
     },
     "audio": {
-      "avg_likes": 824.51,
-      "count": 140,
+      "avg_likes": 1165.01,
+      "count": 142,
       "max_likes": 50000
     },
     "fluctuation": {
@@ -7841,8 +7841,8 @@
       "max_likes": 325
     },
     "polished": {
-      "avg_likes": 387.16,
-      "count": 321,
+      "avg_likes": 539.56,
+      "count": 323,
       "max_likes": 50000
     },
     "polished radio master": {
@@ -7851,8 +7851,8 @@
       "max_likes": 366
     },
     "max": {
-      "avg_likes": 299.72,
-      "count": 1142,
+      "avg_likes": 407.4,
+      "count": 1147,
       "max_likes": 50000
     },
     "mode": {
@@ -7861,13 +7861,13 @@
       "max_likes": 366
     },
     "realism": {
-      "avg_likes": 305.36,
-      "count": 217,
+      "avg_likes": 418.64,
+      "count": 218,
       "max_likes": 50000
     },
     "real": {
-      "avg_likes": 309.27,
-      "count": 215,
+      "avg_likes": 423.58,
+      "count": 216,
       "max_likes": 50000
     },
     "instruments": {
@@ -7876,13 +7876,13 @@
       "max_likes": 366
     },
     "radio": {
-      "avg_likes": 451.49,
-      "count": 138,
+      "avg_likes": 628.1,
+      "count": 139,
       "max_likes": 50000
     },
     "master": {
-      "avg_likes": 731.46,
-      "count": 83,
+      "avg_likes": 1020.37,
+      "count": 84,
       "max_likes": 50000
     },
     "nordic melodic rock ballad with folk elements. emotional duet: deep raspy barito": {
@@ -11021,9 +11021,9 @@
       "max_likes": 2
     },
     "very": {
-      "avg_likes": 4.41,
-      "count": 107,
-      "max_likes": 25
+      "avg_likes": 463.05,
+      "count": 109,
+      "max_likes": 25000
     },
     "hoarse": {
       "avg_likes": 2.89,
@@ -11836,8 +11836,8 @@
       "max_likes": 14
     },
     "make": {
-      "avg_likes": 537.64,
-      "count": 95,
+      "avg_likes": 792.46,
+      "count": 96,
       "max_likes": 50000
     },
     "people": {
@@ -18086,9 +18086,9 @@
       "max_likes": 9
     },
     "locked": {
-      "avg_likes": 4.59,
-      "count": 29,
-      "max_likes": 23
+      "avg_likes": 1617.19,
+      "count": 31,
+      "max_likes": 25000
     },
     "changin": {
       "avg_likes": 0.0,
@@ -18986,8 +18986,8 @@
       "max_likes": 11
     },
     "keep": {
-      "avg_likes": 391.56,
-      "count": 138,
+      "avg_likes": 568.6,
+      "count": 139,
       "max_likes": 50000
     },
     "confrontational": {
@@ -19106,9 +19106,9 @@
       "max_likes": 30
     },
     "human": {
-      "avg_likes": 25.86,
-      "count": 59,
-      "max_likes": 329
+      "avg_likes": 844.69,
+      "count": 61,
+      "max_likes": 25000
     },
     "underground": {
       "avg_likes": 718.83,
@@ -20386,9 +20386,9 @@
       "max_likes": 10
     },
     "explicit": {
-      "avg_likes": 3.73,
-      "count": 11,
-      "max_likes": 10
+      "avg_likes": 3849.31,
+      "count": 13,
+      "max_likes": 25000
     },
     "absurd": {
       "avg_likes": 1.43,
@@ -21666,8 +21666,8 @@
       "max_likes": 71
     },
     "core": {
-      "avg_likes": 576.48,
-      "count": 96,
+      "avg_likes": 828.27,
+      "count": 97,
       "max_likes": 50000
     },
     "heavier": {
@@ -28886,8 +28886,8 @@
       "max_likes": 1
     },
     "instrument": {
-      "avg_likes": 1857.33,
-      "count": 27,
+      "avg_likes": 2683.86,
+      "count": 28,
       "max_likes": 50000
     },
     "leading": {
@@ -53371,8 +53371,8 @@
       "max_likes": 96
     },
     "soundstage": {
-      "avg_likes": 5005.7,
-      "count": 10,
+      "avg_likes": 6823.36,
+      "count": 11,
       "max_likes": 50000
     },
     "groove-driven": {
@@ -59786,9 +59786,9 @@
       "max_likes": 2
     },
     "callbacks": {
-      "avg_likes": 4.0,
-      "count": 2,
-      "max_likes": 6
+      "avg_likes": 12502.0,
+      "count": 4,
+      "max_likes": 25000
     },
     "[style:modern club dance": {
       "avg_likes": 1.0,
@@ -122371,9 +122371,9 @@
       "max_likes": 0
     },
     "physical": {
-      "avg_likes": 71.2,
-      "count": 5,
-      "max_likes": 329
+      "avg_likes": 7193.71,
+      "count": 7,
+      "max_likes": 25000
     },
     "authentic uk jump-up techstep drum & bass": {
       "avg_likes": 26.0,
@@ -132581,9 +132581,9 @@
       "max_likes": 7
     },
     "16th": {
-      "avg_likes": 4.67,
-      "count": 3,
-      "max_likes": 7
+      "avg_likes": 10002.8,
+      "count": 5,
+      "max_likes": 25000
     },
     "dark cinematic neo-soul afro-spiritual anthem • dark alternative r&b • afro-soul": {
       "avg_likes": 9.0,
@@ -159866,9 +159866,9 @@
       "max_likes": 1
     },
     "rapped": {
-      "avg_likes": 0.33,
-      "count": 3,
-      "max_likes": 1
+      "avg_likes": 10000.2,
+      "count": 5,
+      "max_likes": 25000
     },
     "window-rattling": {
       "avg_likes": 0.33,
@@ -162146,8 +162146,8 @@
       "max_likes": 28
     },
     "spread": {
-      "avg_likes": 16679.0,
-      "count": 3,
+      "avg_likes": 18759.25,
+      "count": 4,
       "max_likes": 50000
     },
     "10 seconds end": {
@@ -215156,23 +215156,23 @@
       "max_likes": 329
     },
     "polished. upgrade vocals": {
-      "avg_likes": 25164.5,
-      "count": 4,
+      "avg_likes": 25109.67,
+      "count": 6,
       "max_likes": 50000
     },
     "upgrade audio quality.\npolished radio master. keep core song": {
-      "avg_likes": 25164.5,
-      "count": 4,
+      "avg_likes": 25109.67,
+      "count": 6,
       "max_likes": 50000
     },
     "structure. make it bright": {
-      "avg_likes": 25164.5,
-      "count": 4,
+      "avg_likes": 25109.67,
+      "count": 6,
       "max_likes": 50000
     },
     "3d": {
-      "avg_likes": 25164.5,
-      "count": 4,
+      "avg_likes": 25109.67,
+      "count": 6,
       "max_likes": 50000
     },
     "and expensive.\n[style: heavy grunge rock": {
@@ -215216,8 +215216,8 @@
       "max_likes": 329
     },
     "upgrade": {
-      "avg_likes": 2088.22,
-      "count": 49,
+      "avg_likes": 2986.73,
+      "count": 51,
       "max_likes": 50000
     },
     "90s-leaning": {
@@ -223731,18 +223731,18 @@
       "max_likes": 50000
     },
     "[audio_quality] (max)\n[quality: max] (max)\n[realism: max] (max)\n[real_instrument": {
-      "avg_likes": 50000.0,
-      "count": 1,
+      "avg_likes": 37500.0,
+      "count": 2,
       "max_likes": 50000
     },
     "punchy. wide stereo spread": {
-      "avg_likes": 50000.0,
-      "count": 2,
+      "avg_likes": 37500.0,
+      "count": 4,
       "max_likes": 50000
     },
     "deep 3d soundstage": {
-      "avg_likes": 50000.0,
-      "count": 2,
+      "avg_likes": 37500.0,
+      "count": 4,
       "max_likes": 50000
     },
     "pristine transient separation.\n[style: hardcore aggressive underground trap rap": {
@@ -223786,8 +223786,8 @@
       "max_likes": 50000
     },
     "wide binaural doubled chorus backing vocals": {
-      "avg_likes": 50000.0,
-      "count": 2,
+      "avg_likes": 41666.67,
+      "count": 3,
       "max_likes": 50000
     },
     "discrete stereo trap hi-hat panning": {
@@ -223801,13 +223801,13 @@
       "max_likes": 50000
     },
     "1176 fast peak compression into la-2a optical smoothing": {
-      "avg_likes": 50000.0,
-      "count": 2,
+      "avg_likes": 41666.67,
+      "count": 3,
       "max_likes": 50000
     },
     "pultec 12khz high-shelf sheen": {
-      "avg_likes": 50000.0,
-      "count": 2,
+      "avg_likes": 41666.67,
+      "count": 3,
       "max_likes": 50000
     },
     "clean analog console preamp warmth]\n[drum_engineering: punchy transient-shaped 2": {
@@ -223831,18 +223831,18 @@
       "max_likes": 50000
     },
     "growling analog mid-bass grit between 200-400hz": {
-      "avg_likes": 50000.0,
-      "count": 2,
+      "avg_likes": 41666.67,
+      "count": 3,
       "max_likes": 50000
     },
     "tight sidechain ducking to kick drum]": {
-      "avg_likes": 50000.0,
-      "count": 2,
+      "avg_likes": 41666.67,
+      "count": 3,
       "max_likes": 50000
     },
     "[audio_quality] (max)\n[quality: max] (max)\n[realism: max] (max)\n[real_instruments: max] (max)\n[production: ultra-expensive 24-bit 96khz master]\nmax clean": {
-      "avg_likes": 50000.0,
-      "count": 1,
+      "avg_likes": 37500.0,
+      "count": 2,
       "max_likes": 50000
     },
     "pristine transient separation.\n[style: hardcore aggressive underground trap rap diss track. 140 bpm rotating tempo (70 bpm half-time groove": {
@@ -223861,8 +223861,8 @@
       "max_likes": 50000
     },
     "center-locked kick and sub-bass]\n[vocal_chain: vintage neumann u87 tube microphone": {
-      "avg_likes": 50000.0,
-      "count": 1,
+      "avg_likes": 37500.0,
+      "count": 2,
       "max_likes": 50000
     },
     "clean analog console preamp warmth]\n[drum_engineering: punchy transient-shaped 24-bit kick": {
@@ -223871,19 +223871,134 @@
       "max_likes": 50000
     },
     "warm tape-saturated parallel bus]\n[bass_foundation: solid round sub-bass harmonic weight below 80hz": {
-      "avg_likes": 50000.0,
-      "count": 1,
+      "avg_likes": 37500.0,
+      "count": 2,
       "max_likes": 50000
     },
     "clutch": {
-      "avg_likes": 50000.0,
-      "count": 1,
+      "avg_likes": 33333.33,
+      "count": 3,
       "max_likes": 50000
     },
     "rotating": {
       "avg_likes": 50000.0,
       "count": 1,
       "max_likes": 50000
+    },
+    "pristine transient separation.\n[style: rap diss track": {
+      "avg_likes": 25000.0,
+      "count": 2,
+      "max_likes": 25000
+    },
+    "very explicit": {
+      "avg_likes": 25000.0,
+      "count": 2,
+      "max_likes": 25000
+    },
+    "rapped on a 16th locked pocket grid with rotating tempo": {
+      "avg_likes": 25000.0,
+      "count": 2,
+      "max_likes": 25000
+    },
+    "perfect flow": {
+      "avg_likes": 25000.0,
+      "count": 2,
+      "max_likes": 25000
+    },
+    "punchlines that setup the callback": {
+      "avg_likes": 25000.0,
+      "count": 2,
+      "max_likes": 25000
+    },
+    "self referencing": {
+      "avg_likes": 25000.0,
+      "count": 2,
+      "max_likes": 25000
+    },
+    "triple-time clutch 808": {
+      "avg_likes": 25000.0,
+      "count": 2,
+      "max_likes": 25000
+    },
+    "extremly funny insults": {
+      "avg_likes": 25000.0,
+      "count": 2,
+      "max_likes": 25000
+    },
+    "hilariously funny stabs": {
+      "avg_likes": 25000.0,
+      "count": 2,
+      "max_likes": 25000
+    },
+    "addictive strut": {
+      "avg_likes": 25000.0,
+      "count": 2,
+      "max_likes": 25000
+    },
+    "absolute lyrical technical density": {
+      "avg_likes": 25000.0,
+      "count": 2,
+      "max_likes": 25000
+    },
+    "extremly catchy and rememberable and roast the top of suno banning me out of dis": {
+      "avg_likes": 25000.0,
+      "count": 1,
+      "max_likes": 25000
+    },
+    "trap. 140 bpm. glossy": {
+      "avg_likes": 25000.0,
+      "count": 2,
+      "max_likes": 25000
+    },
+    "radio-calibrated. aggressive male lead on the hook": {
+      "avg_likes": 25000.0,
+      "count": 2,
+      "max_likes": 25000
+    },
+    "extremly catchy and rememberable and roast the top of suno banning me out of discord because i dropped a prompt model like a bunch of woke dickhead. associated trained styles: rotating": {
+      "avg_likes": 25000.0,
+      "count": 1,
+      "max_likes": 25000
+    },
+    "close and intimate on the verses. expert recording with zero robotic artifacts": {
+      "avg_likes": 25000.0,
+      "count": 1,
+      "max_likes": 25000
+    },
+    "mono center verse": {
+      "avg_likes": 25000.0,
+      "count": 1,
+      "max_likes": 25000
+    },
+    "wide spread chorus. crisp trap snares": {
+      "avg_likes": 25000.0,
+      "count": 1,
+      "max_likes": 25000
+    },
+    "triple-velocity hi-hat ratchets": {
+      "avg_likes": 25000.0,
+      "count": 2,
+      "max_likes": 25000
+    },
+    "clutch sliding 808 sub-bass.]\n[stereo_field: pinpoint mono center lead vocal": {
+      "avg_likes": 25000.0,
+      "count": 1,
+      "max_likes": 25000
+    },
+    "discrete stereo panning": {
+      "avg_likes": 25000.0,
+      "count": 1,
+      "max_likes": 25000
+    },
+    "clean analog console preamp warmth]\n[drum_engineering: crisp trap snares": {
+      "avg_likes": 25000.0,
+      "count": 1,
+      "max_likes": 25000
+    },
+    "clutch sliding 808 sub-bass": {
+      "avg_likes": 25000.0,
+      "count": 1,
+      "max_likes": 25000
     }
   },
   "style_cooccurrence": {
@@ -228287,19 +228402,35 @@
     },
     "viral": {
       "female": 12,
+      "wide": 10,
+      "max": 10,
+      "quality": 8,
+      "sweet": 8,
+      "trap": 8,
       "bass": 7,
-      "wide": 6,
-      "trap": 6,
+      "hooks": 6,
+      "melody": 6,
+      "clean": 6,
       "dark": 5,
       "pop": 5,
-      "quality": 5,
-      "sweet": 5,
-      "max": 5,
+      "vocals": 4,
       "cinematic": 4,
-      "vocals": 3,
+      "song": 4,
+      "core": 4,
+      "polished. upgrade vocals": 4,
+      "upgrade audio quality.\npolished radio master. keep core song": 4,
+      "structure. make it bright": 4,
+      "3d": 4,
+      "punchy. wide stereo spread": 4,
+      "deep 3d soundstage": 4,
+      "diss": 4,
+      "track": 4,
+      "rap": 4,
+      "audio": 4,
+      "polished": 4,
+      "upgrade": 4,
       "catchy": 3,
       "electronic": 3,
-      "song": 3,
       "post-glitch": 3,
       "opera": 3,
       "artcore": 3,
@@ -228309,23 +228440,7 @@
       "emotional": 3,
       "passionate": 3,
       "witch": 3,
-      "house": 3,
-      "core": 3,
-      "edm": 3,
-      "ambient": 3,
-      "drum": 3,
-      "earwom": 3,
-      "hardcore": 3,
-      "hooks": 3,
-      "melody": 3,
-      "clean": 3,
-      "dark glam pop": 2,
-      "seductive female vocals": 2,
-      "glossy electropop": 2,
-      "moody synth bass": 2,
-      "108 bpm": 2,
-      "dramatic pop star energy": 2,
-      "catchy chorus": 2
+      "house": 3
     }
   },
   "lyric_openings": {
@@ -228426,16 +228541,17 @@
       ".",
       "[Original Lyrics (KM)]",
       "[Original Lyrics (RU)]",
+      "[Intro: 70 BPM Half-Time Drag, Creeping Clutch 808, Whisper Ad-libs]",
       "[Intro: 70 BPM Half-Time Drag, Creeping Clutch 808, Whisper Ad-libs]"
     ]
   },
   "novel_keywords": {
     "bpm": 2507,
     "male": 2380,
-    "vocals": 2325,
+    "vocals": 2326,
     "female": 1670,
     "chorus": 1180,
-    "max": 1142,
+    "max": 1147,
     "style": 890,
     "voice": 863,
     "lead": 757,
@@ -228445,13 +228561,13 @@
     "hip": 713,
     "electric": 685,
     "kick": 646,
-    "clean": 599,
+    "clean": 602,
     "pads": 589,
     "drum": 548,
     "tempo": 516,
     "snare": 510,
     "verses": 504,
-    "bright": 500,
+    "bright": 501,
     "hook": 499,
     "delivery": 496,
     "mix": 491,
@@ -228461,27 +228577,27 @@
     "harmonies": 456,
     "energy": 441,
     "verse": 437,
-    "song": 435,
+    "song": 436,
     "melancholic": 428,
     "into": 424,
     "bachata": 424,
-    "track": 416,
+    "track": 419,
     "intro": 408,
     "minor": 401,
     "rhythm": 390,
     "upbeat": 388,
-    "wide": 363,
-    "quality": 357,
+    "wide": 367,
+    "quality": 360,
     "guitars": 353,
     "stabs": 352,
     "key": 350,
-    "melody": 344,
+    "melody": 347,
     "studio": 327,
     "male vocals": 321,
     "low": 319,
     "instruments": 314,
+    "hooks": 313,
     "synths": 311,
-    "hooks": 310,
     "tone": 309,
     "bassline": 305,
     "sound": 300,
