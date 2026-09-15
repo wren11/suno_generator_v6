@@ -2,17 +2,17 @@ TITLE
 viral night drive
 
 STYLE
-drive, night, viral, guitar, rock, melodic, bpm, dynamic, piano, max, vocals, bass, solo, emotional
+drive, night, viral, max, polished, pop, quality, clean, rock, mode, audio, real, realism, instruments
 
 EXCLUDE
 low quality, muddy mix, off-key vocals, robotic cadence
 
 LYRICS
 [Verse]
-I woke up with the same old name
-But the mirror learned a longer flame
-Took a train past my second goodbye
-Still chasing viral night drive under verse 1 sky
+They come up clean from the ground
+Yet the dawn keeps giving, day by day
+Every scar said you will stay
+So I laughed and let it play
 
 [Pre Chorus]
 If the world moves on
