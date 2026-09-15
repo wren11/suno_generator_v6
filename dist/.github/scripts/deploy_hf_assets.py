@@ -9,7 +9,7 @@ from pathlib import Path
 from huggingface_hub import HfApi, create_repo
 
 DEFAULT_DATASET_REPO = "wren11ws/suno_lyrics_scansion_corpus"
-DEFAULT_MODEL_REPO = "wren11ws/suno_scansion_lm"
+DEFAULT_MODEL_REPO = "wren11ws/sunup"
 
 DATASET_README_TEMPLATE = """---
 license: mit
