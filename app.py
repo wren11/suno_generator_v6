@@ -4,6 +4,28 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import sys
+
+# Compatibility shim for Gradio 4.x OAuth with huggingface_hub >= 0.26 / 1.x
+try:
+    import huggingface_hub
+    if not hasattr(huggingface_hub, "HfFolder"):
+        class _HfFolderShim:
+            @staticmethod
+            def get_token():
+                try:
+                    return getattr(huggingface_hub, "get_token", lambda: None)()
+                except Exception:
+                    return None
+            @staticmethod
+            def save_token(token):
+                pass
+            @staticmethod
+            def delete_token():
+                pass
+        huggingface_hub.HfFolder = _HfFolderShim
+except Exception:
+    pass
 
 import gradio as gr
 
@@ -152,13 +174,76 @@ The model analyzes style co-occurrence, rhyming density, and line-length varianc
     return md
 
 
-# --- GRADIO INTERFACE ---
-with gr.Blocks(title="Suno AI Song Generator & Reference Model") as demo:
+# --- HUGGING FACE THEME & GRADIO INTERFACE ---
+try:
+    font_family = [gr.themes.GoogleFont("Inter"), "ui-sans-serif", "system-ui", "sans-serif"]
+    mono_family = [gr.themes.GoogleFont("JetBrains Mono"), "ui-monospace", "monospace"]
+except Exception:
+    font_family = ["ui-sans-serif", "system-ui", "sans-serif"]
+    mono_family = ["ui-monospace", "monospace"]
+
+hf_theme = gr.themes.Base(
+    primary_hue=gr.themes.colors.amber,
+    secondary_hue=gr.themes.colors.slate,
+    neutral_hue=gr.themes.colors.slate,
+    font=font_family,
+    font_mono=mono_family,
+).set(
+    body_background_fill="*neutral_950",
+    body_background_fill_dark="*neutral_950",
+    button_primary_background_fill="linear-gradient(135deg, #FFD21E 0%, #FF9D00 100%)",
+    button_primary_background_fill_hover="linear-gradient(135deg, #FFE066 0%, #FFB020 100%)",
+    button_primary_text_color="#000000",
+    button_primary_text_color_dark="#000000",
+    button_primary_border_color="#F59E0B",
+    block_title_text_weight="600",
+    block_border_width="1px",
+    block_shadow="none",
+)
+
+hf_css = """
+.gradio-container {
+    max-width: 1240px !important;
+    margin: auto !important;
+}
+.hf-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    background: rgba(255, 210, 30, 0.08);
+    border: 1px solid rgba(255, 210, 30, 0.28);
+    border-radius: 12px;
+    margin-bottom: 22px;
+}
+.hf-badge {
+    background: #FFD21E;
+    color: #000;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 12px;
+    display: inline-block;
+    letter-spacing: 0.5px;
+}
+"""
+
+with gr.Blocks(theme=hf_theme, css=hf_css, title="Suno AI Song Generator & Reference Model") as demo:
     gr.Markdown(
         """
-        # 🎵 Suno AI Song Generator & Reference Model
-        ### Professional Songwriting Prompt & Lyric Generation Trained on 7,000+ Suno Tracks
-        Generate paste-ready custom mode prompts, discover high-traction style combinations, and analyze tracks.
+        <div class="hf-hero">
+            <div>
+                <h1 style="margin: 0; font-size: 26px; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+                    <span>🤗 🎵</span> Suno AI Studio V6 Generator
+                </h1>
+                <p style="margin: 6px 0 0 0; color: #9CA3AF; font-size: 14px;">
+                    Professional Songwriting Prompt & Lyric Scansion Engine trained on 9,000+ Suno tracks
+                </p>
+            </div>
+            <div>
+                <span class="hf-badge">HF SPACE EDITION</span>
+            </div>
+        </div>
         """
     )
 

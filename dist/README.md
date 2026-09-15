@@ -1,8 +1,8 @@
 ---
 title: Suno AI Song Generator & Reference Model
 emoji: 🎵
-colorFrom: indigo
-colorTo: purple
+colorFrom: yellow
+colorTo: orange
 sdk: gradio
 sdk_version: 4.44.0
 app_file: app.py
@@ -10,180 +10,176 @@ pinned: false
 license: mit
 ---
 
-# 🎵 Suno AI Song Generator & Reference Model
-### *High-Traction Studio V6 Songwriting Inference Engine & Interactive REPL Harness*
+# Suno AI Song Generator & Reference Model (v6)
 
-[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces)
-[![GitHub Actions CI/CD](https://img.shields.io/badge/GitHub%20Actions-Deploy%20to%20HF-success)](https://github.com/wren11/suno_generator_v6/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10+-brightgreen.svg)](https://www.python.org/)
-[![Model Target: Suno V6](https://img.shields.io/badge/Suno-V6%20Studio-FF2E93.svg)](https://suno.com)
-[![Catalog: 9,075+ Songs](https://img.shields.io/badge/Catalog-9%2C075%2B%20Songs-4C1.svg)](#-dataset--corpus-statistics)
-[![Corpus: 30.8MB JSONL](https://img.shields.io/badge/Lyrics%20Corpus-30.8%20MB%20Scansion-blueviolet.svg)](#-dataset--corpus-statistics)
-[![Hardware: Multi-GPU / SLI](https://img.shields.io/badge/Hardware-Dual%20RTX%202080%20SLI%20Ready-76B900.svg)](#-multi-gpu--rtx-2080-sli-hardware-acceleration)
+Inference engine, lyric scansion pipeline, and asset generator for [Suno AI](https://suno.com). Generates full 3,000 and 5,000-character Studio V6 payloads, synchronized `.lrc` lyric files, AI album artwork, and 1080p teaser videos.
+
+- **Hugging Face Space**: [wren11ws/suno_prompt_generator_v6](https://huggingface.co/spaces/wren11ws/suno_prompt_generator_v6)
+- **Live Song Examples on Suno**:
+  - [PERFECT - by WREN](https://suno.com/song/7fc6893c-5764-47b9-9ba7-abef7120ab0e)
+  - [BITTER TASTE - by WREN](https://suno.com/song/8ac118c0-3aab-43ac-af8f-57dbd1368e29)
 
 ---
 
-## ⚡ Quickstart — 2 Single Scripts for Everything
+## Output Bundle
 
-No complicated setup, no duplicate output directories, and zero code edits required. Everything runs from two single `.bat` scripts:
+Each generation produces a complete release package in `output/songs/<slug>/`:
 
-```
-======================================================================
-  ____  _   _ _   _  ___     ____ _____ _   _ _____ ____     _  _____ ___  ____  
- / ___|| | | | \ | |/ _ \   / ___| ____| \ | | ____|  _ \   / \|_   _/ _ \|  _ \ 
- \___ \| | | |  \| | | | | | |  _|  _| |  \| |  _| | |_) | / _ \ | || | | | |_) |
-  ___) | |_| | |\  | |_| | | |_| | |___| |\  | |___|  _ < / ___ \| || |_| |  _ < 
- |____/ \___/|_| \_|\___/   \____|_____|_| \_|_____|_| \_/_/   \_\_| \___/|_| \_\
-
-  Suno AI Songwriting Reference Model & Interactive REPL Harness v2.0
-======================================================================
-```
+| File | Description |
+|---|---|
+| `<slug>_payload_3k.json` | 3,000-character payload (`title`, `style`, `prompt`, `negativeTags`) |
+| `<slug>_payload_5k.json` | 5,000-character extended studio payload with structural section markers |
+| `<slug>_prompt_3k.txt` | Raw prompt text formatted for direct paste into Suno web UI |
+| `<slug>_lyrics.lrc` | Synchronized lyric timestamps (compatible with DAWs and players) |
+| `<slug>_cover.png` / `.jpg` | 1024x1024 album cover art with genre badge placed in the bottom right corner |
+| `<slug>_teaser_10s.mp4` | 1080p Ultra HD (1920x1080 @ 60fps) teaser video with BPM-synced audio |
+| `<slug>_cover_prompt.txt` | Prompt used for diffusion image generation |
+| `<slug>_production_brief.md` | Mix specifications, target LUFS, vocal chain, and arrangement breakdown |
 
 ---
 
-### 🎮 1. `run.bat` — Run the Studio, Wizard, or CLI
-Double-click `run.bat` (or run in your terminal):
-```powershell
-# Launch interactive REPL with Wizard, live trending, and hit generator:
-.\run.bat
+## Prerequisites & Installation
 
-# Or pass CLI arguments directly:
-.\run.bat wizard
-.\run.bat song "cyberpunk synthwave future hacker" --title "NEON PULSE" --bpm 128
+- Python 3.10 or higher
+- [ffmpeg](https://ffmpeg.org/) installed and available in system `PATH` (for teaser video rendering)
+
+```bash
+git clone https://github.com/wren11/suno_generator_v6.git
+cd suno_generator_v6
+pip install -r requirements.txt
 ```
 
-#### Inside the Interactive REPL:
-- `wizard` — Interactive step-by-step Hit Song Creation Wizard.
-- `song <theme>` — Generates a complete 3K & 5K Suno V6 payload, 1024x1024 cover art, and 10s teaser video into `output/songs/`.
-- `trending` — Browse live trending tracks from Suno.com (use `trending --train` to retrain).
-- `suggest` — Suggest viral tags and high-traction style packs.
-- `cover <title>` — Render custom album cover art with text overlays.
-- `video <cover_png>` — Render 10-second tempo-synced video teaser.
-- `help` — List all documented commands.
+On Windows, `run.bat` and `train.bat` handle virtual environment detection and execution automatically.
 
 ---
 
-### 🎓 2. `train.bat` — Train the Model & Expand the Corpus
-Double-click `train.bat` (or run in your terminal):
-```powershell
-# Default (no arguments): Auto-train from live Suno.com trending songs
-.\train.bat
+## Usage
 
-# Ingest a specific Suno song URL (downloads audio, transcribes with Whisper, retrains):
-.\train.bat "https://suno.com/song/<song-id>"
+### 1. Command-Line Generation
 
-# Ingest an entire creator profile:
-.\train.bat @wren
+Generate a full song bundle:
 
-# Ingest handcrafted prompt archives and created songs:
-.\train.bat created
+```bash
+python -m src.song_creator "dark electro-pop anthem about digital isolation" --title "CHROME PULSE" --bpm 128 --vocal f
 ```
 
-*Every trained or generated track automatically appends lyrics and scansion patterns to `corpus/suno_lyrics_corpus.jsonl`, updates `models/suno_song_catalog.json`, and retrains the reference model.*
-
----
-
-## 🧠 Always-On Neural LLM & Corpus Auto-Learning
-
-1. **Default LLM Generation**: The system always uses the neural Scansion-LM and studio LLM engine by default across CLI, REPL, and Wizard.
-2. **Continuous Corpus Growth**: Every song generated or ingested is automatically analyzed:
-   - Full song sheets formatted with `<|brief|> ... <|sheet|> ... <|end|>` tokens.
-   - Section-by-section scansion continuations extracted into `corpus/suno_lyrics_corpus.jsonl`.
-   - New tracks registered in `models/suno_song_catalog.json` (9,075+ songs) and retrained in `models/suno_song_inference_model.json`.
-3. **100% Anti-AI Cliché Enforcement**: Purges generic words (*neon, tapestry, whispers, echoes, ignite, shadows, labyrinth, beacon, abyss, ethereal, celestial*).
-4. **Prompt Constraint Detection**: Automatically extracts lipograms (e.g., *without letter e*) and custom lyrical directives directly from your prompt.
-
----
-
-## 📁 Clean Output Structure
-
-All outputs are written to a single canonical directory:
-```
-output/
-├── songs/         # Generated song folders (JSON payloads, LRC lyrics, production briefs)
-├── covers/        # Generated 1024x1024 album covers (PNG & JPG)
-├── prompts/       # Paste-ready Suno prompt seeds
-├── payloads_3k/   # 3K Suno Studio V6 API payloads
-├── payloads_5k/   # 5K Extended Suno Studio V6 API payloads
-├── audio/         # Downloaded training audio streams
-└── transcripts/   # Transcribed Whisper lyrics & timestamp alignments
+Windows shortcut:
+```cmd
+run.bat song "dark electro-pop anthem about digital isolation" --title "CHROME PULSE" --bpm 128 --vocal f
 ```
 
+#### CLI Options
+
+| Argument | Description | Default |
+|---|---|---|
+| `theme` | Musical style, genre, or lyrical prompt | *(Required)* |
+| `--title`, `-t` | Song title (auto-derived from theme if omitted) | `""` |
+| `--vocal`, `-v` | Vocal gender: `m` or `f` | `m` |
+| `--bpm`, `-b` | Tempo in beats per minute | `140` |
+| `--text`, `-tx` | Custom badge/text overlay on the album cover | `""` |
+| `--ref`, `-r` | Reference image URL or local path for album artwork | `""` |
+| `--image-prompt`, `-ip` | Custom visual prompt for AI diffusion artwork | `""` |
+| `--no-video` | Skip rendering the 10-second MP4 teaser | `False` |
+| `--lyrics`, `-l` | Custom lyrics string | `""` |
+| `--lyrics-file`, `-lf` | Path to custom text file containing lyrics | `""` |
+| `--lipogram` | Omit specific letters from lyrics (e.g. `e`) | `""` |
+| `--engine` | Generation engine: `llm`, `reference`, `hybrid`, `dynamic` | `llm` |
+| `--out-dir`, `-o` | Output directory | `output/songs` |
+
 ---
 
-## 🎨 Album Cover Art & 10s Teaser Video Studio
+### 2. Interactive REPL
 
-Every song generation automatically creates multi-media assets:
+Start the interactive terminal environment:
 
-### 1. High-Resolution Cover Art (1024x1024 PNG + JPG)
-- **Genre-Tuned Visual Palettes**: Cyberpunk neon, dark glam synthwave, vintage lo-fi, trap midnight, and acoustic warm gold.
-- **Custom Studio Typography**: Render your exact song title, artist persona, and custom badge (`DELUXE`, `RADIO MASTER`).
-- **Base Image URL Referencing**: Pass any public image URL via `--ref <url>` to use as a starting canvas.
-- **AI Art Prompts**: Generates a dedicated `*_cover_prompt.txt` optimized for Midjourney, DALL-E 3, and Stable Diffusion.
+```bash
+python -m src.cli repl
+```
 
-### 2. 10-Second Teaser Video (`teaser_10s.mp4`)
-- **1080x1080 Square Format**: Ready for Instagram Reels, TikTok, YouTube Shorts, and X/Twitter.
-- **Cinematic Ken Burns Effect**: Smooth camera zoom centered on the album artwork.
-- **Beat-Synchronized Audio**: Generates an acoustic/synth audio pulse matching your exact BPM.
+Windows shortcut:
+```cmd
+run.bat
+```
+
+#### Available REPL Commands
+
+- `wizard` — Guided step-by-step song generator (prompts for genre, title, tempo, vocal type).
+- `song <theme> [flags]` — Generate a complete song bundle.
+- `trending` — Fetch current trending songs from Suno.com explore feed (`trending --train` to retrain).
+- `suggest --theme <genre>` — Query learned database for viral tag combinations and scansion patterns.
+- `cover <title> [--genre <g>]` — Render album cover art.
+- `video <cover_path> [--bpm <b>]` — Render 1080p 10-second teaser video.
+- `stats` — Display catalog count, corpus size, and model state.
+- `help` — Show help for all commands.
 
 ---
 
-## ⚡ Multi-GPU & RTX 2080 SLI Hardware Acceleration
+### 3. Training & Dataset Pipeline
 
-The engine includes built-in hardware topology detection (`src/hardware.py`):
-- **Auto-Detection**: Identifies dual NVIDIA GPUs (e.g. 2x NVIDIA GeForce RTX 2080) and detects SLI / NVLink links.
-- **Distributed Inference & Training**: Supports PyTorch `DistributedDataParallel` and `DataParallel` across multiple GPUs.
-- **Hardware Status Check**:
-  ```powershell
+The model learns from cataloged tracks, extracting lyrical structures, rhyme density, and tag co-occurrence metrics.
+
+#### Ingest Suno Tracks
+Ingest individual song URLs or creator profiles (downloads audio, transcribes with Whisper, extracts scansion records):
+
+```bash
+# Ingest specific song URL:
+python -m src.trainer "https://suno.com/song/7fc6893c-5764-47b9-9ba7-abef7120ab0e"
+
+# Ingest creator profile:
+python -m src.trainer @wren
+
+# Fetch and train on live Suno.com trending feed:
+python -m src.trainer trending
+```
+
+Windows shortcut:
+```cmd
+train.bat "https://suno.com/song/<song-id>"
+train.bat trending
+```
+
+#### Dataset Storage
+- `corpus/suno_lyrics_corpus.jsonl` — Section-by-section scansion dataset with syllable counts and rhyme tags.
+- `models/suno_song_catalog.json` — Indexed catalog of tracks with play counts, upvotes, and metadata.
+- `models/suno_song_inference_model.json` — Compiled reference weights and style associations.
+
+---
+
+## Hardware Acceleration (Multi-GPU / SLI)
+
+`src/hardware.py` inspects system topology at launch:
+- Automatically detects single or dual NVIDIA GPUs (e.g., dual RTX 2080 in SLI / NVLink).
+- Configures device distribution for training and inference when PyTorch CUDA is available.
+- Check hardware status:
+  ```bash
   python -c "import src.hardware; src.hardware.print_hardware_report()"
   ```
 
 ---
 
-## 🚀 Automated Deployment to Hugging Face (GitHub Actions)
+## Hugging Face Spaces Deployment
 
-When you commit or push to GitHub, the included release workflow automatically packages and deploys the entire model and Space to Hugging Face!
+The repository includes a GitHub Actions workflow (`.github/workflows/deploy_huggingface.yml`) that deploys directly to the Hugging Face Space on push:
 
-### Setup in 30 Seconds:
-1. Go to your repository on GitHub: **Settings** -> **Secrets and variables** -> **Actions**.
-2. Click **New repository secret**.
-3. Name: `HFKEY`
-4. Value: *Paste your Hugging Face write token* (from [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)).
-5. Click **Add secret**.
-
-Every push to `main` deploys the live interactive Gradio Studio Space at `https://huggingface.co/spaces/<your-username>/suno-generator-v6`.
+1. Open your repository on GitHub: **Settings** -> **Secrets and variables** -> **Actions**.
+2. Add a repository secret named **`HFKEY`**.
+3. Paste a Hugging Face User Access Token with **Write** permission (generated at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)).
+4. Every push to `main` (or manual trigger under the Actions tab) syncs the application to [wren11ws/suno_prompt_generator_v6](https://huggingface.co/spaces/wren11ws/suno_prompt_generator_v6).
 
 ---
 
-## 📊 Dataset & Model Statistics
+## Web UI (Gradio)
 
-- **Catalog Songs**: **9,075+ tracks** cataloged with complete metadata, play counts, and like counts.
-- **Training Corpus**: **30.8 MB** compiled lyrical scansion dataset (`corpus/suno_lyrics_corpus.jsonl`).
-- **Scansion Patterns**: **670+ structural progressions** (verse-chorus-bridge mappings).
-- **Tag Traction Scoring**: **45,800+ indexed musical tags** ranked by real viral performance.
-- **Scansion-LM**: 81.9M parameter causal LM fine-tuned on rhyme density and meter scansion.
+Launch the local Gradio web interface:
 
----
+```bash
+python app.py
+```
 
-## 📜 REPL Command Reference
-
-| Command | Description | Example |
-|---|---|---|
-| `wizard` | Step-by-step interactive song creation wizard | `wizard` |
-| `song <theme>` | Generate a full 3K/5K song bundle + cover + video | `song "viral anthem" --title "HEAT" --bpm 140` |
-| `trending` | View live trending songs from Suno.com (`--train` to retrain) | `trending --train` |
-| `suggest` | Style packs & viral tag suggestions from learned data | `suggest --theme "dark pop"` |
-| `train <url>` | Ingest Suno URL, download audio, transcribe, retrain | `train "https://suno.com/song/<id>"` |
-| `cover <title>` | Generate standalone album cover art | `cover "CYBER WIFE" --genre "electropop"` |
-| `video <cover>` | Render standalone 10s teaser video from image | `video output/covers/cover.png --bpm 128` |
-| `stats` | Display catalog metrics, traction scores, and LM state | `stats` |
-| `batch <theme>`| Generate multiple creative variations | `batch "phonk drift" --n 5` |
-| `help` | Show interactive help and documentation | `help` |
-| `exit` | Exit the REPL session | `exit` |
+Opens at `http://127.0.0.1:7860`.
 
 ---
 
-## 📄 License
+## License
 
-Distributed under the **MIT License**. See `LICENSE` for more information.
+Distributed under the [MIT License](LICENSE).
