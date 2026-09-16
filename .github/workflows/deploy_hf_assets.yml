@@ -9,6 +9,9 @@ on:
       - 'corpus/**'
       - 'models/**'
       - 'foundry/export/**'
+      - 'foundry/data/**'
+      - '.github/scripts/deploy_hf_assets.py'
+      - '.github/workflows/deploy_hf_assets.yml'
   workflow_dispatch:
     inputs:
       target:

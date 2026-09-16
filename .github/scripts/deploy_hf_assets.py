@@ -1,8 +1,9 @@
-"""Deploy Suno Lyrics Scansion Corpus (Dataset) and Scansion-LM / Reference Model (Model) to Hugging Face Hub."""
+"""Deploy Suno Lyrics & Scansion Corpus (Dataset) and Scansion-LM / Reference Model (Model) to Hugging Face Hub."""
 
 from __future__ import annotations
 
 import os
+import shutil
 import sys
 import tempfile
 from pathlib import Path
@@ -15,52 +16,140 @@ DATASET_README_TEMPLATE = """---
 license: mit
 task_categories:
   - text-generation
+  - feature-extraction
 tags:
   - suno
   - music
   - lyrics
   - scansion
   - songwriting
+  - prompt-engineering
 language:
   - en
 size_categories:
   - 10K<n<100K
+pretty_name: "Suno AI Trends & Scansion Lyrics Dataset"
+dataset_info:
+  features:
+    - name: prompt
+      dtype: string
+    - name: text
+      dtype: string
+    - name: title
+      dtype: string
+    - name: style
+      dtype: string
+    - name: section
+      dtype: string
+    - name: kind
+      dtype: string
+    - name: char_len
+      dtype: int64
+  splits:
+    - name: train
+      num_bytes: 30915015
+      num_examples: 25000
 ---
 
-# Suno AI Lyrics & Scansion Corpus (Suno Trends)
+# Suno AI Trends & Lyrics Scansion Dataset (`{dataset_repo}`)
 
-A curated dataset of **25,000+ scansion-formatted lyrical sections** and complete song sheets extracted and aligned for Suno AI Custom Mode prompting.
+A curated dataset and ML training corpus containing **25,000+ scansion-formatted lyrical sections**, complete song sheets, and structural metadata aligned for Suno AI Custom Mode prompting, rhyme density modeling, and musical meter analysis.
 
-## Dataset Structure
+## Dataset Structure & Files
 
-- `train.jsonl` (`suno_lyrics_corpus.jsonl`): Contains prompt-completion pairs formatted for rhyme density, section continuation, and meter scansion.
-- `catalog.json` (`suno_song_catalog.json`): Comprehensive catalog metadata for 9,075+ analyzed tracks, including play counts, upvotes, style tags, and duration.
+This repository contains the complete training, scansion, and catalog data powering the [Suno Prompt Generator v6](https://huggingface.co/spaces/wren11ws/suno_prompt_generator_v6) and [Scansion-LM](https://huggingface.co/wren11ws/sunup):
 
-## Usage with Hugging Face `datasets`
+| File | Size | Description |
+|---|---|---|
+| `train.jsonl` | ~31 MB | Default Hugging Face `train` split: 25,000+ prompt-completion pairs formatted for section continuation, rhyme density, and meter scansion. |
+| `suno_lyrics_corpus.jsonl` | ~31 MB | Full lyrical corpus with titles, styles, sections, and character lengths. |
+| `suno_lyrics_corpus.stats.json` | <1 KB | High-level statistics on vocabulary size, section distribution, and token counts. |
+| `catalog.json` / `suno_song_catalog.json` | ~98 MB | 9,075 cataloged top Suno tracks with play counts, upvotes, style descriptors, durations, and metadata. |
+| `reference_knowledge_graph.json` | ~5.5 MB | Genre transition probabilities, tempo clustering, and scansion inference graph rules. |
+| `scansion_lm_training_corpus.jsonl` | ~328 KB | DistilGPT2 fine-tuning training corpus with `<|endoftext|>` tokens and section headers. |
+| `user_lyric_extracts.jsonl` | ~940 KB | Scansion extracts annotated with foot types (iambic, trochaic, spondaic), line counts, rhyme schemes, and masculine/feminine endings. |
+| `seed_scansion_extracts.jsonl` | ~77 KB | Curated golden scansion seeds spanning folk, desert rock, synthwave, and cinematic genres. |
+| `suno_trending_snapshots.json` | ~118 KB | Trending feed snapshots capturing ranking positions, play velocity, and community engagement. |
+| `auto_train_processed.json` | ~2 MB | Crawl statuses and provenance mapping for processed track IDs. |
+| `tokenizer/` | Directory | Custom BPE tokenizer configuration, vocabulary mappings, and special tokens. |
 
+## Quickstart: Loading with Python
+
+### 1. Load the Core Lyrics Split (`datasets`)
 ```python
 from datasets import load_dataset
 
-# Load full corpus
-dataset = load_dataset("wren11ws/suno_trends")
+# Load default train split
+dataset = load_dataset("{dataset_repo}")
 print(dataset["train"][0])
 ```
 
-## Schema
+Sample record:
+```json
+{{
+  "prompt": "Title: Heat Line\\nIdea: A man scraping survival out of desert heat\\nVerse:\\n",
+  "text": "He scrapes at the basin for a mouthful of shade\\nThe highway keeps humming a colorless note\\nDust writes his name on the back of his throat",
+  "title": "Heat Line",
+  "style": "desert rock, gritty slide guitar, 120 bpm, andante",
+  "section": "Verse",
+  "kind": "section_continuation",
+  "char_len": 182
+}}
+```
 
-| Column | Type | Description |
-|---|---|---|
-| `prompt` | string | Section header prompt with brief, title, and target style |
-| `text` | string | Full lyrical completion adhering to meter and rhyme constraints |
-| `title` | string | Song title |
-| `style` | string | Musical genre, tempo, and instrumental descriptors |
-| `section` | string | Section type (e.g. `Verse`, `Chorus`, `Bridge`, `Outro`) |
-| `kind` | string | `full_sheet` or `section_continuation` |
-| `char_len` | int | Length in characters |
+### 2. Loading Scansion Extracts or Catalogs directly
+```python
+from huggingface_hub import hf_hub_download
+import json
+
+# Download and inspect song catalog
+catalog_path = hf_hub_download(repo_id="{dataset_repo}", repo_type="dataset", filename="catalog.json")
+with open(catalog_path, "r", encoding="utf-8") as f:
+    catalog = json.load(f)
+print(f"Loaded {{len(catalog)}} cataloged Suno songs")
+
+# Download scansion extracts with meter maps
+extracts_path = hf_hub_download(repo_id="{dataset_repo}", repo_type="dataset", filename="user_lyric_extracts.jsonl")
+with open(extracts_path, "r", encoding="utf-8") as f:
+    for line in f:
+        sample = json.loads(line)
+        print("Song:", sample["title"], "| Meter Map:", sample.get("meter_map"))
+        break
+```
+
+## Schema Reference
+
+### `train.jsonl` / `suno_lyrics_corpus.jsonl`
+- `prompt` (`str`): Prompt header including song title, concept idea, and section tag.
+- `text` (`str`): Target lyrical continuation adhering to meter, scansion, and rhyme scheme.
+- `title` (`str`): Song title.
+- `style` (`str`): Music genre, instrumentation, tempo, and Italian feel descriptors.
+- `section` (`str`): Section type (`Verse`, `Chorus`, `Bridge`, `Outro`, `Intro`).
+- `kind` (`str`): `section_continuation` or `full_sheet`.
+- `char_len` (`int`): Character length of completion.
+
+### `user_lyric_extracts.jsonl` & `seed_scansion_extracts.jsonl`
+- `title` (`str`): Song title.
+- `source` (`str`): Extract source / theme.
+- `text` (`str`): Complete song sheet with metatag sandwich (`[Start]`, `[Verse]`, `[Chorus]`, etc.).
+- `meter_map` (`list[dict]`): Foot-by-foot poetic scansion per line (`iamb`, `trochee`, `spondee`, `dactyl`, `anapest`).
+- `rhyme_schema` (`str`): Rhyme structure sequence (e.g. `AABACCDDEEFG`).
+- `masculine_endings` (`int`): Count of stressed ending syllables.
+- `feminine_endings` (`int`): Count of unstressed ending syllables.
+- `energy` (`str`): Delivery dynamic (`aggressive`, `contemplative`, etc.).
+- `line_count` (`int`): Total line count.
+- `sung` (`list[str]`): List of pure sung lyric lines stripped of bracket directives.
+- `dna` (`str`): Structural songwriting analysis notes.
+
+## Connected Ecosystem
+- **Hugging Face Space**: [wren11ws/suno_prompt_generator_v6](https://huggingface.co/spaces/wren11ws/suno_prompt_generator_v6)
+- **Hugging Face Model**: [wren11ws/sunup](https://huggingface.co/wren11ws/sunup)
+- **GitHub Repository**: [wren11ws/suno_generator_v6](https://github.com/wren11ws/suno_generator_v6)
 
 ## License
-MIT License.
+MIT License. Free for research, musicology, and AI songwriting model development.
 """
+
 
 def deploy_dataset(api: HfApi, repo_id: str, workspace: Path) -> bool:
     print("\n" + "=" * 60)
@@ -72,38 +161,60 @@ def deploy_dataset(api: HfApi, repo_id: str, workspace: Path) -> bool:
     except Exception as exc:
         print(f"[!] Warning on create_repo: {exc}")
 
-    corpus_file = workspace / "corpus" / "suno_lyrics_corpus.jsonl"
-    catalog_file = workspace / "models" / "suno_song_catalog.json"
-
     with tempfile.TemporaryDirectory() as tmp_dir:
         staging = Path(tmp_dir)
         # 1. Dataset Card
-        (staging / "README.md").write_text(DATASET_README_TEMPLATE, encoding="utf-8")
-        
-        # 2. Files for standard datasets loader
-        if corpus_file.exists():
-            import shutil
-            shutil.copy2(corpus_file, staging / "train.jsonl")
-            shutil.copy2(corpus_file, staging / "suno_lyrics_corpus.jsonl")
-            print(f"[+] Staged corpus: {corpus_file.stat().st_size // (1024*1024)} MB")
-        
-        if catalog_file.exists():
-            import shutil
-            shutil.copy2(catalog_file, staging / "catalog.json")
-            print(f"[+] Staged catalog: {catalog_file.stat().st_size // 1024} KB")
+        readme_content = DATASET_README_TEMPLATE.format(dataset_repo=repo_id)
+        (staging / "README.md").write_text(readme_content, encoding="utf-8")
 
+        # 2. Files for standard datasets loader & ML training
+        file_mappings = [
+            # (source, [destinations in dataset repo])
+            (workspace / "corpus" / "suno_lyrics_corpus.jsonl", ["train.jsonl", "suno_lyrics_corpus.jsonl"]),
+            (workspace / "corpus" / "suno_lyrics_corpus.stats.json", ["suno_lyrics_corpus.stats.json"]),
+            (workspace / "models" / "suno_song_catalog.json", ["catalog.json", "suno_song_catalog.json"]),
+            (workspace / "models" / "suno_song_inference_model.json", ["reference_knowledge_graph.json", "suno_song_inference_model.json"]),
+            (workspace / "models" / "auto_train_processed.json", ["auto_train_processed.json"]),
+            (workspace / "foundry" / "data" / "corpus.jsonl", ["scansion_lm_training_corpus.jsonl"]),
+            (workspace / "foundry" / "data" / "user_extracts.jsonl", ["user_lyric_extracts.jsonl"]),
+            (workspace / "foundry" / "data" / "seed_extracts.jsonl", ["seed_scansion_extracts.jsonl"]),
+            (workspace / "foundry" / "data" / "suno-trending.json", ["suno_trending_snapshots.json"]),
+        ]
+
+        staged_count = 0
+        for src, dest_names in file_mappings:
+            if src.exists():
+                for dname in dest_names:
+                    dest = staging / dname
+                    shutil.copy2(src, dest)
+                    size_mb = src.stat().st_size / (1024 * 1024)
+                    print(f"[+] Staged {dname} ({size_mb:.2f} MB)")
+                    staged_count += 1
+            else:
+                print(f"[-] Source not found: {src}")
+
+        # Stage tokenizer directory if present
+        tokenizer_dir = workspace / "foundry" / "data" / "tokenizer"
+        if tokenizer_dir.exists() and tokenizer_dir.is_dir():
+            dest_tok = staging / "tokenizer"
+            shutil.copytree(tokenizer_dir, dest_tok, dirs_exist_ok=True)
+            print(f"[+] Staged tokenizer directory ({len(list(tokenizer_dir.glob('*')))} files)")
+            staged_count += 1
+
+        print(f"[*] Total dataset items staged: {staged_count}. Uploading to Hugging Face...")
         try:
             api.upload_folder(
                 folder_path=str(staging),
                 repo_id=repo_id,
                 repo_type="dataset",
-                commit_message="Update Suno lyrics corpus dataset from GitHub Actions",
+                commit_message="Update Suno lyrics, trends and scansion ML dataset from GitHub Actions",
             )
             print(f"[+] Successfully deployed dataset: https://huggingface.co/datasets/{repo_id}")
             return True
         except Exception as exc:
             print(f"[-] Failed uploading dataset: {exc}", file=sys.stderr)
             return False
+
 
 def deploy_model(api: HfApi, repo_id: str, workspace: Path) -> bool:
     print("\n" + "=" * 60)
@@ -116,18 +227,20 @@ def deploy_model(api: HfApi, repo_id: str, workspace: Path) -> bool:
         print(f"[!] Warning on create_repo: {exc}")
 
     foundry_export = workspace / "foundry" / "export"
+    scansion_lm_dir = workspace / "models" / "scansion_lm"
     inf_model_file = workspace / "models" / "suno_song_inference_model.json"
 
-    if not foundry_export.exists():
-        print(f"[-] Foundry export folder not found at {foundry_export}", file=sys.stderr)
+    export_dir = foundry_export if foundry_export.exists() else scansion_lm_dir
+    if not export_dir.exists():
+        print(f"[-] Model export folder not found at {foundry_export} or {scansion_lm_dir}", file=sys.stderr)
         return False
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         staging = Path(tmp_dir)
-        import shutil
-        for item in foundry_export.iterdir():
+        for item in export_dir.iterdir():
             if item.is_file():
                 shutil.copy2(item, staging / item.name)
+                print(f"[+] Staged model file: {item.name}")
 
         if inf_model_file.exists():
             shutil.copy2(inf_model_file, staging / "suno_song_inference_model.json")
@@ -145,6 +258,7 @@ def deploy_model(api: HfApi, repo_id: str, workspace: Path) -> bool:
         except Exception as exc:
             print(f"[-] Failed uploading model: {exc}", file=sys.stderr)
             return False
+
 
 def main() -> int:
     token = os.environ.get("HFKEY") or os.environ.get("HF_TOKEN")
@@ -169,6 +283,7 @@ def main() -> int:
             ok = False
 
     return 0 if ok else 1
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
