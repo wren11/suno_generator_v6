@@ -11,6 +11,33 @@
       "rstrip": false,
       "normalized": true,
       "special": true
+    },
+    {
+      "id": 50257,
+      "content": "<|brief|>",
+      "single_word": false,
+      "lstrip": false,
+      "rstrip": false,
+      "normalized": true,
+      "special": false
+    },
+    {
+      "id": 50258,
+      "content": "<|end|>",
+      "single_word": false,
+      "lstrip": false,
+      "rstrip": false,
+      "normalized": true,
+      "special": false
+    },
+    {
+      "id": 50259,
+      "content": "<|sheet|>",
+      "single_word": false,
+      "lstrip": false,
+      "rstrip": false,
+      "normalized": true,
+      "special": false
     }
   ],
   "normalizer": null,

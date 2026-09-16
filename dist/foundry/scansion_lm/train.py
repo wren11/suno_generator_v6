@@ -89,7 +89,15 @@ def train(
     write_status(phase="tokenize")
     train_tokenizer()
     tok = load_tokenizer()
-    records = [json.loads(l) for l in CORPUS_JSONL.read_text().splitlines() if l.strip()]
+    records = []
+    with open(CORPUS_JSONL, "r", encoding="utf-8") as f:
+        for l in f:
+            l = l.strip()
+            if l:
+                try:
+                    records.append(json.loads(l))
+                except Exception:
+                    pass
     ds = LyricDataset(records, tok, TRAIN_MAX_LEN)
     pad_id = tok.pad_token_id if tok.pad_token_id is not None else tok.eos_token_id
     bos_id = tok.bos_token_id if tok.bos_token_id is not None else pad_id
@@ -135,7 +143,7 @@ def train(
         model.config.task_specific_params = {
             "text-generation": {"do_sample": True, "max_new_tokens": 80, "temperature": 0.85}
         }
-    device = torch.device("cpu")
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model.to(device)
     model.train()
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -203,6 +211,7 @@ def train(
     EXPORT.mkdir(parents=True, exist_ok=True)
     model.eval()
     model.config.use_cache = True
+    model.to("cpu")
     model.save_pretrained(str(EXPORT), safe_serialization=True)
     tok.save_pretrained(str(EXPORT))
     from .export_bundle import finalize_export

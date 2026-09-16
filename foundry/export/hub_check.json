@@ -1,14 +1,13 @@
 {
-  "ok": true,
+  "ok": false,
   "arch": [
     "GPT2LMHeadModel"
   ],
-  "vocab": 50257,
-  "params": 81912576,
+  "vocab": 50260,
+  "params": 81914880,
   "english_lines": [
-    "I was on the road with my face down and I could not make it back for me",
-    "The ceiling made a mockery of you every time I tried"
+    "I am a gentleman with the ability to climb up and down like I did before in my dream job"
   ],
-  "preview": "I was on the road with my face down and I could not make it back for me\nThe ceiling made a mockery of you every time I tried\n",
+  "preview": "I am a gentleman with the ability to climb up and down like I did before in my dream job",
   "auto_map": false
 }
