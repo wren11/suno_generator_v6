@@ -98,9 +98,9 @@ Licensed under the **Apache 2.0 License**. See `LICENSE` for details.
 - n_positions: `1024`
 - n_layer / n_embd / n_head: `6 / 768 / 12`
 - parameters: `81914880`
-- steps: `300/300`
-- train loss (avg): `2.932485580444336`
-- examples: `1000`
+- steps: `350/350`
+- train loss (avg): `2.5573558807373047`
+- examples: `2000`
 
 Load with vanilla Transformers — no custom `auto_map`:
 

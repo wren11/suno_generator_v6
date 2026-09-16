@@ -6,8 +6,8 @@
   "vocab": 50260,
   "params": 81914880,
   "english_lines": [
-    "I am a gentleman with the ability to climb up and down like I did before in my dream job"
+    "I am a woman who<|end|> sweat like the sun and not even give away your name"
   ],
-  "preview": "I am a gentleman with the ability to climb up and down like I did before in my dream job",
+  "preview": "I am a woman who<|end|> sweat like the sun and not even give away your name",
   "auto_map": false
 }

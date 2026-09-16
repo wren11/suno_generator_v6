@@ -1,27 +1,27 @@
 {
-  "total_records": 42694,
-  "total_words": 4660090,
-  "unique_vocabulary": 69836,
+  "total_records": 65284,
+  "total_words": 7223951,
+  "unique_vocabulary": 96705,
   "top_sections": {
-    "Verse": 11526,
-    "Chorus": 8932,
-    "Bridge": 2523,
-    "Outro": 1704,
-    "Intro": 1249,
-    "Breakdown": 1001,
-    "Male": 256,
-    "Pre-Chorus": 180
+    "Verse": 19176,
+    "Chorus": 13513,
+    "Bridge": 3802,
+    "Outro": 2824,
+    "Intro": 1957,
+    "Breakdown": 1435,
+    "Male": 260,
+    "Pre-Chorus": 247
   },
   "top_genres": {
-    "rap": 377,
-    "tape saturation": 281,
-    "emotional": 255,
-    "4": 215,
-    "melodic": 214,
-    "pop": 211,
-    "male vocals": 196,
-    "dark": 185,
-    "piano": 175,
-    "romantic": 173
+    "rap": 461,
+    "emotional": 443,
+    "cinematic": 350,
+    "tape saturation": 326,
+    "pop": 324,
+    "melodic": 310,
+    "dark": 279,
+    "female vocals": 273,
+    "4": 265,
+    "piano": 263
   }
 }

@@ -47,13 +47,13 @@ dataset_info:
       dtype: int64
   splits:
     - name: train
-      num_bytes: 52600000
-      num_examples: 42694
+      num_bytes: 81687615
+      num_examples: 65284
 ---
 
 # Suno AI Trends & Lyrics Scansion Dataset (`{dataset_repo}`)
 
-A curated dataset and ML training corpus containing **42,694 scansion-formatted lyrical sections**, complete song sheets, and structural metadata aligned for Suno AI Custom Mode prompting, rhyme density modeling, and musical meter analysis.
+A curated dataset and ML training corpus containing **65,284 scansion-formatted lyrical sections**, complete song sheets, and structural metadata aligned for Suno AI Custom Mode prompting, rhyme density modeling, and musical meter analysis.
 
 ## Dataset Structure & Files
 
@@ -61,11 +61,11 @@ This repository contains the complete training, scansion, and catalog data power
 
 | File | Size | Description |
 |---|---|---|
-| `train.jsonl` | ~53 MB | Default Hugging Face `train` split: 42,694 prompt-completion pairs formatted for section continuation, rhyme density, and meter scansion. |
-| `suno_lyrics_corpus.jsonl` | ~53 MB | Full lyrical corpus with titles, styles, sections, and character lengths. |
+| `train.jsonl` | ~82 MB | Default Hugging Face `train` split: 65,284 prompt-completion pairs formatted for section continuation, rhyme density, and meter scansion. |
+| `suno_lyrics_corpus.jsonl` | ~82 MB | Full lyrical corpus with titles, styles, sections, and character lengths. |
 | `suno_lyrics_corpus.stats.json` | <1 KB | High-level statistics on vocabulary size, section distribution, and token counts. |
-| `catalog.json` / `suno_song_catalog.json` | ~123 MB | 11,082 cataloged top Suno tracks with play counts, upvotes, style descriptors, durations, and metadata. |
-| `reference_knowledge_graph.json` | ~6.8 MB | Genre transition probabilities, tempo clustering, and scansion inference graph rules. |
+| `catalog.json` / `suno_song_catalog.json` | ~192 MB | 16,082 cataloged top Suno tracks with play counts, upvotes, style descriptors, durations, and metadata. |
+| `reference_knowledge_graph.json` | ~8.2 MB | Genre transition probabilities, tempo clustering, and scansion inference graph rules. |
 | `scansion_lm_training_corpus.jsonl` | ~328 KB | DistilGPT2 fine-tuning training corpus with `<|endoftext|>` tokens and section headers. |
 | `user_lyric_extracts.jsonl` | ~940 KB | Scansion extracts annotated with foot types (iambic, trochaic, spondaic), line counts, rhyme schemes, and masculine/feminine endings. |
 | `seed_scansion_extracts.jsonl` | ~77 KB | Curated golden scansion seeds spanning folk, desert rock, synthwave, and cinematic genres. |
