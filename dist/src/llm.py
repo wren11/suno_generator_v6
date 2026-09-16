@@ -108,7 +108,7 @@ class ScansionLLM:
                 (cand / "model.safetensors").exists() or (cand / "pytorch_model.bin").exists()
             ):
                 return cand
-        return "distilgpt2"
+        return "wren11ws/sunup"
 
     def load(self) -> None:
         if self._loaded:
