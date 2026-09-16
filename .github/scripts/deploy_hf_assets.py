@@ -8,7 +8,7 @@ import tempfile
 from pathlib import Path
 from huggingface_hub import HfApi, create_repo
 
-DEFAULT_DATASET_REPO = "wren11ws/suno_lyrics_scansion_corpus"
+DEFAULT_DATASET_REPO = "wren11ws/suno_trends"
 DEFAULT_MODEL_REPO = "wren11ws/sunup"
 
 DATASET_README_TEMPLATE = """---
@@ -27,7 +27,7 @@ size_categories:
   - 10K<n<100K
 ---
 
-# Suno AI Lyrics & Scansion Corpus
+# Suno AI Lyrics & Scansion Corpus (Suno Trends)
 
 A curated dataset of **25,000+ scansion-formatted lyrical sections** and complete song sheets extracted and aligned for Suno AI Custom Mode prompting.
 
@@ -42,7 +42,7 @@ A curated dataset of **25,000+ scansion-formatted lyrical sections** and complet
 from datasets import load_dataset
 
 # Load full corpus
-dataset = load_dataset("wren11ws/suno_lyrics_scansion_corpus")
+dataset = load_dataset("wren11ws/suno_trends")
 print(dataset["train"][0])
 ```
 

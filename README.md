@@ -16,7 +16,7 @@ Inference engine, lyric scansion pipeline, and asset generator for [Suno AI](htt
 
 - **Hugging Face Model**: [wren11ws/sunup](https://huggingface.co/wren11ws/sunup)
 - **Hugging Face Space**: [wren11ws/suno_prompt_generator_v6](https://huggingface.co/spaces/wren11ws/suno_prompt_generator_v6)
-- **Hugging Face Dataset**: [wren11ws/suno_lyrics_scansion_corpus](https://huggingface.co/datasets/wren11ws/suno_lyrics_scansion_corpus)
+- **Hugging Face Dataset**: [wren11ws/suno_trends](https://huggingface.co/datasets/wren11ws/suno_trends)
 - **Live Song Examples on Suno**:
   - [PERFECT - by WREN](https://suno.com/song/7fc6893c-5764-47b9-9ba7-abef7120ab0e)
   - [BITTER TASTE - by WREN](https://suno.com/song/8ac118c0-3aab-43ac-af8f-57dbd1368e29)

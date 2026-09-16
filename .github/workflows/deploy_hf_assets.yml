@@ -23,7 +23,7 @@ on:
       dataset_repo:
         description: "Hugging Face Dataset repo id"
         required: false
-        default: "wren11ws/suno_lyrics_scansion_corpus"
+        default: "wren11ws/suno_trends"
       model_repo:
         description: "Hugging Face Model repo id"
         required: false
@@ -55,7 +55,7 @@ jobs:
         env:
           HFKEY: ${{ secrets.HFKEY }}
           DEPLOY_TARGET: ${{ github.event.inputs.target || 'all' }}
-          DATASET_REPO: ${{ github.event.inputs.dataset_repo || 'wren11ws/suno_lyrics_scansion_corpus' }}
+          DATASET_REPO: ${{ github.event.inputs.dataset_repo || 'wren11ws/suno_trends' }}
           MODEL_REPO: ${{ github.event.inputs.model_repo || 'wren11ws/sunup' }}
         run: |
           python .github/scripts/deploy_hf_assets.py
