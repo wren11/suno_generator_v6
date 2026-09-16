@@ -1525,6 +1525,14 @@ def create_complete_song_bundle(
         "teaser_video": video_mp4,
         "lrc_file": str(lrc_file),
         "brief_file": str(brief_file),
+        "cover_file": str(cover_file),
+        "files": {
+            "lrc": str(lrc_file),
+            "brief": str(brief_file),
+            "cover": str(cover_file),
+            "cover_png": str(cover_png) if cover_png else "",
+            "cover_jpg": str(cover_jpg) if cover_jpg else "",
+        },
     }
 
 
