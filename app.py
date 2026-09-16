@@ -81,7 +81,16 @@ MODEL_PATHS = [
 MODEL_FILE = next((p for p in MODEL_PATHS if p.exists()), MODEL_PATHS[0])
 model = SongwritingReferenceModel(MODEL_FILE)
 
+# Hugging Face ZeroGPU compatibility shim
+try:
+    import spaces
+    gpu_decorator = spaces.GPU
+except Exception:
+    def gpu_decorator(fn):
+        return fn
 
+
+@gpu_decorator
 def generate_song_prompt(
     theme: str,
     tier: str,
@@ -166,6 +175,7 @@ def explore_styles(tier: str) -> tuple[str, str]:
     )
 
 
+@gpu_decorator
 def analyze_suno_song(url: str) -> tuple[str, str, str, str, str]:
     if not url or not url.strip():
         return "Please enter a valid Suno song URL or ID", "", "", "", ""
