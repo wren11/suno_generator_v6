@@ -281,7 +281,7 @@ hf_css = """
 }
 """
 
-with gr.Blocks(theme=hf_theme, css=hf_css, title="Suno AI Song Generator & Reference Model") as demo:
+with gr.Blocks(theme=hf_theme, css=hf_css, title="Suno AI Song Generator & Reference Model", analytics_enabled=False) as demo:
     gr.Markdown(
         """
         <div class="hf-hero">
@@ -300,9 +300,9 @@ with gr.Blocks(theme=hf_theme, css=hf_css, title="Suno AI Song Generator & Refer
         """
     )
 
-    with gr.Tabs():
+    with gr.Tabs(selected="tab_studio") as main_tabs:
         # TAB 1: PROMPT STUDIO
-        with gr.TabItem("✨ AI Prompt Studio"):
+        with gr.TabItem("✨ AI Prompt Studio", id="tab_studio"):
             with gr.Row():
                 with gr.Column(scale=1):
                     theme_input = gr.Textbox(
@@ -352,38 +352,38 @@ with gr.Blocks(theme=hf_theme, css=hf_css, title="Suno AI Song Generator & Refer
                     stats_output = gr.Markdown()
 
                 with gr.Column(scale=1):
-                    with gr.Tabs():
-                        with gr.TabItem("🔥 3K Studio V6 JSON (~3,000 Chars)"):
+                    with gr.Tabs(selected="inner_tab_3k") as output_tabs:
+                        with gr.TabItem("🔥 3K Studio V6 JSON (~3,000 Chars)", id="inner_tab_3k"):
                             v6_3k_output = gr.Code(
                                 label="Complete 3K Suno Studio V6 JSON Specification (Click Copy top-right)",
                                 language="json",
                                 lines=20,
                             )
-                        with gr.TabItem("⚡ 5K Extended V6 JSON (~5,000 Chars)"):
+                        with gr.TabItem("⚡ 5K Extended V6 JSON (~5,000 Chars)", id="inner_tab_5k"):
                             v6_5k_output = gr.Code(
                                 label="Complete 5K Extended Suno Studio V6 JSON Specification",
                                 language="json",
                                 lines=20,
                             )
-                        with gr.TabItem("⏱️ Synchronized LRC Lyrics"):
+                        with gr.TabItem("⏱️ Synchronized LRC Lyrics", id="inner_tab_lrc"):
                             lrc_output = gr.Textbox(
                                 label="Musical Timestamps & Scansion Lines (.LRC format)",
                                 lines=18,
                             )
-                        with gr.TabItem("📑 Production Brief"):
+                        with gr.TabItem("📑 Production Brief", id="inner_tab_brief"):
                             brief_output = gr.Markdown()
-                        with gr.TabItem("🎨 Cover Art Prompt"):
+                        with gr.TabItem("🎨 Cover Art Prompt", id="inner_tab_cover"):
                             cover_output = gr.Code(
                                 label="Generative Cover Art Specification & Color Palette",
                                 language="json",
                                 lines=18,
                             )
-                        with gr.TabItem("📋 Suno Custom Mode (Text)"):
+                        with gr.TabItem("📋 Suno Custom Mode (Text)", id="inner_tab_paste"):
                             paste_output = gr.Textbox(
                                 label="Paste this directly into Suno Custom Mode",
                                 lines=16,
                             )
-                        with gr.TabItem("🎼 Field Breakdown"):
+                        with gr.TabItem("🎼 Field Breakdown", id="inner_tab_breakdown"):
                             out_title = gr.Textbox(label="Song Title")
                             out_style = gr.Textbox(label="Style of Music (Tags)", lines=2)
                             out_exclude = gr.Textbox(label="Exclude Styles (Negative Prompt)")
@@ -405,14 +405,15 @@ with gr.Blocks(theme=hf_theme, css=hf_css, title="Suno AI Song Generator & Refer
                     cover_output,
                     stats_output,
                 ],
+                api_name="generate_song_prompt",
             )
-            p1.click(lambda: ("midnight neon drive synthwave fast bass", "Viral"), outputs=[theme_input, tier_select])
-            p2.click(lambda: ("stadium rock anthem electric guitar roaring drums", "Viral"), outputs=[theme_input, tier_select])
-            p3.click(lambda: ("late night bedroom acoustic confession heartfelt sad", "High"), outputs=[theme_input, tier_select])
-            p4.click(lambda: ("heavy 808 cyberpunk bass rage aggressive trap", "Viral"), outputs=[theme_input, tier_select])
+            p1.click(lambda: ("midnight neon drive synthwave fast bass", "Viral"), outputs=[theme_input, tier_select], api_name=False)
+            p2.click(lambda: ("stadium rock anthem electric guitar roaring drums", "Viral"), outputs=[theme_input, tier_select], api_name=False)
+            p3.click(lambda: ("late night bedroom acoustic confession heartfelt sad", "High"), outputs=[theme_input, tier_select], api_name=False)
+            p4.click(lambda: ("heavy 808 cyberpunk bass rage aggressive trap", "Viral"), outputs=[theme_input, tier_select], api_name=False)
 
         # TAB 2: STYLE EXPLORER
-        with gr.TabItem("🔍 Style & Vocabulary Explorer"):
+        with gr.TabItem("🔍 Style & Vocabulary Explorer", id="tab_explorer"):
             gr.Markdown("### Discover Trending and Novel Musical Descriptors")
             with gr.Row():
                 with gr.Column():
@@ -426,10 +427,11 @@ with gr.Blocks(theme=hf_theme, css=hf_css, title="Suno AI Song Generator & Refer
                 fn=explore_styles,
                 inputs=[explorer_tier],
                 outputs=[top_styles_out, novel_styles_out],
+                api_name="explore_styles",
             )
 
         # TAB 3: SUNO SONG ANALYZER
-        with gr.TabItem("🎧 Song Analyzer"):
+        with gr.TabItem("🎧 Song Analyzer", id="tab_analyzer"):
             gr.Markdown("### Inspect Any Public Suno Track")
             with gr.Row():
                 with gr.Column(scale=1):
@@ -451,10 +453,11 @@ with gr.Blocks(theme=hf_theme, css=hf_css, title="Suno AI Song Generator & Refer
                 fn=analyze_suno_song,
                 inputs=[suno_url_input],
                 outputs=[song_info_md, analyzed_title, analyzed_style, analyzed_lyrics, song_audio_preview],
+                api_name="analyze_suno_song",
             )
 
         # TAB 4: MODEL STATS
-        with gr.TabItem("📊 Model Statistics"):
+        with gr.TabItem("📊 Model Statistics", id="tab_stats"):
             stats_md = gr.Markdown(get_model_stats())
 
     gr.Markdown(
