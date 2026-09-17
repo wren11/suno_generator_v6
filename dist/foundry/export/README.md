@@ -99,8 +99,8 @@ Licensed under the **Apache 2.0 License**. See `LICENSE` for details.
 - n_layer / n_embd / n_head: `6 / 768 / 12`
 - parameters: `81914880`
 - steps: `350/350`
-- train loss (avg): `2.5573558807373047`
-- examples: `2000`
+- train loss (avg): `2.138702630996704`
+- examples: `1000`
 
 Load with vanilla Transformers — no custom `auto_map`:
 

@@ -288,7 +288,123 @@ class SongwritingReferenceModel:
         return [t.upper() for t, _ in ranked[:limit]]
 
 
-    def suggest_style_pack(self, *, tier: str = "high", n: int = 12) -> StyleSuggestion:
+    GENRE_ANCHORS = {
+        "metal": [
+            "industrial metal", "gothic metal", "dark", "aggressive", "heavy distortion",
+            "crushing drop-D riffs", "double-kick blast beats", "raw", "cinematic", "melodic metalcore",
+            "eerie dark synth textures", "raspy whisper to scream vocal",
+        ],
+        "rock": [
+            "alternative rock", "overdriven guitars", "hard rock", "punchy live drums",
+            "driving bassline", "grunge", "raw energy", "melodic rock", "radio master",
+        ],
+        "rap": [
+            "drill rap", "trap", "sliding 808 glides", "hard punchy snare", "140 BPM",
+            "aggressive cadence", "dark melodic synth", "fast syncopated delivery", "tight pocket",
+        ],
+        "synthwave": [
+            "synthwave", "cyberpunk", "124 BPM", "analog arpeggiator", "gated reverb snare",
+            "driving synth bassline", "retro-futuristic", "vocoder harmonies", "lush analog warmth",
+        ],
+        "pop": [
+            "dance-pop", "catchy synth hooks", "bright radio master", "punchy electro kick",
+            "sweet anthemic vocal belt", "wide stereo spread", "polished", "uplifting energy",
+        ],
+        "country": [
+            "country pop", "fingerpicked acoustic guitar", "pedal steel", "warm resonant lead",
+            "tight wooden percussion", "storytelling", "front porch warmth", "bittersweet",
+        ],
+        "rnb": [
+            "contemporary r&b", "neo-soul", "warm rhodes piano", "breathy falsetto",
+            "deep sub-bass", "laid-back groove", "gospel vocal harmonies", "intimate late-night vibe",
+        ],
+    }
+
+    def suggest_style_pack(
+        self,
+        *,
+        genre: str = "",
+        theme: str = "",
+        tier: str = "high",
+        n: int = 12,
+    ) -> StyleSuggestion:
+        combined_req = (genre + " " + theme).lower()
+
+        # Artist-specific overrides
+        if any(w in combined_req for w in ("manson", "marylin", "marilyn")):
+            artist_tags = [
+                "industrial metal", "gothic shock rock", "90s industrial", "distorted mechanical bass synth",
+                "crushing drop-D power chords", "eerie detuned synth pads", "raspy whisper to scream vocal",
+                "cold aggressive industrial groove", "118 BPM", "dark", "polished radio master",
+            ]
+            return StyleSuggestion(
+                style_pack=", ".join(artist_tags[:n]),
+                tags=artist_tags[:n],
+                confidence=0.95,
+                based_on_songs=int(self._state.get("songs_used") or 0),
+                traction_tier=tier,
+            )
+        elif any(w in combined_req for w in ("slipknot", "deathcore")):
+            artist_tags = [
+                "nu-metal", "downtuned drop-B riffs", "aggressive blast beats", "percussion barrage",
+                "dual scream-clean vocals", "heavy groove", "raw aggressive", "double-kick thunder",
+            ]
+            return StyleSuggestion(
+                style_pack=", ".join(artist_tags[:n]),
+                tags=artist_tags[:n],
+                confidence=0.95,
+                based_on_songs=int(self._state.get("songs_used") or 0),
+                traction_tier=tier,
+            )
+        elif any(w in combined_req for w in ("rammstein", "neue deutsche")):
+            artist_tags = [
+                "neue deutsche härte", "industrial metal", "marching 4-on-the-floor kick", "heavy power chords",
+                "deep resonant baritone lead", "staccato guitar chug", "analog synth stabs", "120 BPM",
+            ]
+            return StyleSuggestion(
+                style_pack=", ".join(artist_tags[:n]),
+                tags=artist_tags[:n],
+                confidence=0.95,
+                based_on_songs=int(self._state.get("songs_used") or 0),
+                traction_tier=tier,
+            )
+
+        # Genre detection
+        matched_genre = ""
+        for g_key in self.GENRE_ANCHORS:
+            if g_key in combined_req:
+                matched_genre = g_key
+                break
+
+        if matched_genre:
+            anchors = list(self.GENRE_ANCHORS[matched_genre])
+            tag_traction = self._state.get("tag_traction") or {}
+            co = self._state.get("style_cooccurrence") or {}
+            
+            # Mine high-traction catalog tags matching genre
+            mined: list[tuple[str, float]] = []
+            for tag, st in tag_traction.items():
+                t_clean = tag.strip().lower()
+                if 3 <= len(t_clean) <= 30 and not any(p in t_clean for p in ("[", "]", "\n", "polished radio master", "keep core")):
+                    if any(w in t_clean for w in [matched_genre, "dark", "heavy", "raw", "melodic", "driving", "aggressive"]):
+                        score = st.get("avg_likes", 0) * 1.5 + st.get("count", 0) * 2.0
+                        mined.append((t_clean, score))
+            mined.sort(key=lambda x: -x[1])
+            
+            tags = list(anchors)
+            for m_tag, _ in mined:
+                if m_tag not in tags and len(tags) < n:
+                    tags.append(m_tag)
+
+            return StyleSuggestion(
+                style_pack=", ".join(tags[:n]),
+                tags=tags[:n],
+                confidence=0.92,
+                based_on_songs=int(self._state.get("songs_used") or 0),
+                traction_tier=tier,
+            )
+
+        # Fallback to global traction tier tags
         tier_tags = (self._state.get("tier_tag_counts") or {}).get(tier) or {}
         tag_traction = self._state.get("tag_traction") or {}
         if not tier_tags:

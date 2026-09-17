@@ -54,3 +54,23 @@ dist/output/audio/*
 !dist/output/audio/.gitkeep
 dist/output/transcripts/*
 !dist/output/transcripts/.gitkeep
+
+# Large Neural Model Weights & Datasets (Hosted on Hugging Face: wren11ws/sunup & wren11ws/suno_trends)
+*.safetensors
+*.bin
+*.pt
+*.onnx
+*.h5
+models/suno_song_catalog.json
+dist/models/suno_song_catalog.json
+foundry/data/user_extracts.jsonl
+dist/foundry/data/user_extracts.jsonl
+foundry/data/corpus.jsonl
+dist/foundry/data/corpus.jsonl
+foundry/runs/
+dist/foundry/runs/
+*.jsonl
+corpus/
+dist/corpus/
+models/suno_10000_songs_curated.jsonl
+dist/models/suno_10000_songs_curated.jsonl

@@ -101,14 +101,17 @@ class ScansionLLM:
         return cls._instance
 
     def _resolve_model_path(self, path: str | Path | None) -> Path | str:
+        hf_repo = os.environ.get("SCANSION_LM_REPO", "wren11ws/sunup").strip()
         if path and Path(path).exists():
-            return Path(path)
+            p = Path(path)
+            if (p / "model.safetensors").exists() or (p / "pytorch_model.bin").exists():
+                return p
         for cand in CANDIDATE_PATHS:
             if (cand / "config.json").exists() and (
                 (cand / "model.safetensors").exists() or (cand / "pytorch_model.bin").exists()
             ):
                 return cand
-        return "wren11ws/sunup"
+        return hf_repo
 
     def load(self) -> None:
         if self._loaded:
@@ -138,27 +141,39 @@ class ScansionLLM:
     def generate_continuation(
         self,
         prompt: str,
-        max_new: int = 80,
+        max_new: int = 120,
         temperature: float = 0.85,
         do_sample: bool = True,
+        min_new: int = 30,
     ) -> str:
         self.load()
         import torch
         from src.hardware import get_optimal_device
 
+        # Clean conversational prompt wrappers if present
+        clean_prompt = re.sub(
+            r"^(?:🎤\s*)?(?:continue\s+these\s+lyrics\s*:?|continue\s+lyrics\s*:?|continue\s*:?)\s*",
+            "",
+            prompt.strip(),
+            flags=re.I,
+        ).strip()
+        if not clean_prompt.endswith("\n"):
+            clean_prompt += "\n"
+
         device = get_optimal_device()
-        enc = self.tok(prompt, return_tensors="pt")
+        enc = self.tok(clean_prompt, return_tensors="pt")
         enc = {k: v.to(device) for k, v in enc.items()}
         prompt_len = enc["input_ids"].shape[1]
-        eos = self.tok.eos_token_id or self.tok.pad_token_id
+
+        actual_min = min(max_new, max(16, min_new))
 
         gen_kw: dict = {
+            "min_new_tokens": actual_min,
             "max_new_tokens": max_new,
             "pad_token_id": self.tok.pad_token_id,
-            "eos_token_id": eos,
             "use_cache": True,
-            "repetition_penalty": 1.15,
-            "no_repeat_ngram_size": 4,
+            "repetition_penalty": 1.18,
+            "no_repeat_ngram_size": 3,
         }
         if do_sample and temperature > 0:
             gen_kw.update(do_sample=True, top_k=50, top_p=0.92, temperature=float(temperature))
@@ -169,10 +184,8 @@ class ScansionLLM:
         with torch.no_grad():
             out = raw_model.generate(**enc, **gen_kw)
         new = self.tok.decode(out[0][prompt_len:], skip_special_tokens=False)
-        for sp in ("<|endoftext|>", "<|end|>", "<|sheet|>", "<|brief|>"):
-            if sp in new:
-                new = new.split(sp, 1)[0]
-        return new
+        new = re.sub(r"<\|[^|>]*\|>", "\n", new)
+        return new.strip()
 
     def generate_section_lines(
         self,

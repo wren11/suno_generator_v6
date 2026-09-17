@@ -18,9 +18,12 @@ import sys
 import threading
 import time
 import urllib.parse
-import urllib.request
 from pathlib import Path
 from typing import Any
+
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # Ensure project root is in sys.path
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -108,6 +111,16 @@ MODIFIERS = [
 NUM_SUFFIXES = ["", "1", "2", "10", "12", "15", "20", "24", "25", "69", "77", "88", "99", "100", "777", "888", "999", "2024", "2025"]
 
 
+def _create_http_session() -> requests.Session:
+    """Create a persistent requests.Session with connection pooling and auto-retries."""
+    session = requests.Session()
+    session.headers.update({"User-Agent": _USER_AGENT})
+    retries = Retry(total=2, backoff_factor=0.2, status_forcelist=[500, 502, 503, 504])
+    adapter = HTTPAdapter(max_retries=retries, pool_connections=16, pool_maxsize=16)
+    session.mount("https://", adapter)
+    return session
+
+
 class SunoHarvester:
     """High-throughput multi-threaded Suno song harvester."""
 
@@ -151,6 +164,22 @@ class SunoHarvester:
         for p in INITIAL_PLAYLISTS:
             self.playlist_queue.append(p)
 
+        # Seed top creator handles from existing catalog ranked by upvotes
+        handle_likes: dict[str, list[int]] = collections.defaultdict(list)
+        for rec in self.catalog.all_records():
+            h = (rec.artist_id or "").strip().lstrip("@")
+            if h:
+                handle_likes[h].append(rec.external_like_count or 0)
+
+        ranked_handles = sorted(
+            handle_likes.keys(),
+            key=lambda h: (sum(1 for l in handle_likes[h] if l >= 100), max(handle_likes[h])),
+            reverse=True,
+        )
+        for h in ranked_handles:
+            if h not in self.handle_queue:
+                self.handle_queue.append(h)
+
         # Generate systematic music handles
         for g in GENRES:
             for m in MODIFIERS:
@@ -158,18 +187,14 @@ class SunoHarvester:
                     self.handle_queue.append(f"{g}_{m}{n}")
                     self.handle_queue.append(f"{g}{m}{n}")
 
-    def _fetch_trending_feed(self) -> list[dict]:
+    def _fetch_trending_feed(self, session: requests.Session) -> list[dict]:
         url = "https://studio-api-prod.suno.com/api/unified/feed"
         clips: list[dict] = []
         payload = {"feed_id": "trending", "page_size": 50}
-        req = urllib.request.Request(
-            url,
-            headers={"User-Agent": _USER_AGENT, "Content-Type": "application/json"},
-            data=json.dumps(payload).encode("utf-8"),
-        )
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
+            resp = session.post(url, json=payload, timeout=12)
+            if resp.status_code == 200:
+                data = resp.json()
                 for it in data.get("feed", {}).get("items", []):
                     c = it.get("content_item") or it.get("clip") or {}
                     if c:
@@ -178,25 +203,26 @@ class SunoHarvester:
             print(f"[!] Notice fetching unified feed: {ex}", flush=True)
         return clips
 
-    def harvest(self, target_count: int = 5000, min_likes: int = 100, workers: int = 12) -> int:
+    def harvest(self, target_count: int = 5000, min_likes: int = 100, workers: int = 14) -> int:
         print("=" * 65, flush=True)
         print("  SUNO HIGH-THROUGHPUT TRENDING & EXPLORE HARVESTER", flush=True)
         print("=" * 65, flush=True)
-        print(f"Target Songs To Ingest:  {target_count:,}", flush=True)
-        print(f"Minimum Upvotes/Likes:   {min_likes}+", flush=True)
+        print(f"Target Songs To Ingest:    {target_count:,}", flush=True)
+        print(f"Minimum Upvotes/Likes:     {min_likes}+", flush=True)
         print(f"Concurrent Worker Threads: {workers}", flush=True)
-        print(f"Initial Existing Songs:  {len(self.seen_ids):,}", flush=True)
-        print(f"Seeded Creator Handles:  {len(self.handle_queue):,}", flush=True)
-        print(f"Seeded Playlists:        {len(self.playlist_queue):,}", flush=True)
-        print(f"Target Catalog File:     {self.catalog_path}", flush=True)
+        print(f"Initial Existing Songs:    {len(self.seen_ids):,}", flush=True)
+        print(f"Seeded Creator Handles:    {len(self.handle_queue):,}", flush=True)
+        print(f"Seeded Playlists:          {len(self.playlist_queue):,}", flush=True)
+        print(f"Target Catalog File:       {self.catalog_path}", flush=True)
         print("-" * 65, flush=True)
 
         newly_ingested = 0
         last_save_time = time.time()
+        main_session = _create_http_session()
 
         # 1. Drain Unified Trending Feed
         print("\n[*] Fetching Suno Unified Trending Feed ...", flush=True)
-        trending_clips = self._fetch_trending_feed()
+        trending_clips = self._fetch_trending_feed(main_session)
         for c in trending_clips:
             h_t = (c.get("handle") or "").strip().lstrip("@")
             if h_t and h_t not in self.visited_handles:
@@ -212,6 +238,8 @@ class SunoHarvester:
 
         def worker_task() -> None:
             nonlocal newly_ingested, last_save_time
+            thread_session = _create_http_session()
+
             while newly_ingested < target_count:
                 item_type = None
                 target_item = None
@@ -236,21 +264,22 @@ class SunoHarvester:
                         return
 
                 if item_type == "playlist":
-                    self._crawl_playlist(target_item, min_likes, target_count)
+                    _crawl_playlist(thread_session, target_item, min_likes, target_count)
                 elif item_type == "handle":
-                    self._crawl_handle(target_item, min_likes, target_count)
+                    _crawl_handle(thread_session, target_item, min_likes, target_count)
 
-        def _crawl_playlist(pid: str, min_likes: int, target_count: int) -> None:
+        def _crawl_playlist(session: requests.Session, pid: str, min_likes: int, target_count: int) -> None:
             nonlocal newly_ingested, last_save_time
             page = 1
             max_pages = 10
             added_for_pl = 0
             while page <= max_pages and newly_ingested < target_count:
                 url = f"https://studio-api.prod.suno.com/api/playlist/{pid}/?page={page}"
-                req = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
                 try:
-                    with urllib.request.urlopen(req, timeout=12) as resp:
-                        pdata = json.loads(resp.read().decode("utf-8"))
+                    resp = session.get(url, timeout=10)
+                    if resp.status_code != 200:
+                        break
+                    pdata = resp.json()
                 except Exception:
                     break
 
@@ -277,7 +306,7 @@ class SunoHarvester:
                 if len(clips) < 4:
                     break
                 page += 1
-                time.sleep(0.06)
+                time.sleep(0.04)
 
             if added_for_pl > 0:
                 with self.lock:
@@ -286,10 +315,10 @@ class SunoHarvester:
                         self.save()
                         last_save_time = time.time()
 
-        def _crawl_handle(handle: str, min_likes: int, target_count: int) -> None:
+        def _crawl_handle(session: requests.Session, handle: str, min_likes: int, target_count: int) -> None:
             nonlocal newly_ingested, last_save_time
             page = 1
-            max_pages = 15
+            max_pages = 20
             added_for_handle = 0
 
             while page <= max_pages and newly_ingested < target_count:
@@ -297,10 +326,11 @@ class SunoHarvester:
                     f"https://studio-api.prod.suno.com/api/profiles/{urllib.parse.quote(handle)}"
                     f"?playlists_sort_by=created_at&clips_sort_by=upvote_count&page={page}"
                 )
-                req = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
                 try:
-                    with urllib.request.urlopen(req, timeout=10) as resp:
-                        pdata = json.loads(resp.read().decode("utf-8"))
+                    resp = session.get(url, timeout=10)
+                    if resp.status_code != 200:
+                        break
+                    pdata = resp.json()
                 except Exception:
                     break
 
@@ -339,7 +369,7 @@ class SunoHarvester:
                 if stop_handle or len(clips) < 4:
                     break
                 page += 1
-                time.sleep(0.05)
+                time.sleep(0.04)
 
             if added_for_handle > 0:
                 with self.lock:
@@ -348,12 +378,10 @@ class SunoHarvester:
                         self.save()
                         last_save_time = time.time()
 
-        self._crawl_playlist = _crawl_playlist
-        self._crawl_handle = _crawl_handle
-
-        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
-            futures = [executor.submit(worker_task) for _ in range(workers)]
-            concurrent.futures.wait(futures)
+        if newly_ingested < target_count:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
+                futures = [executor.submit(worker_task) for _ in range(workers)]
+                concurrent.futures.wait(futures)
 
         # Final save
         self.save()
@@ -449,9 +477,9 @@ class SunoHarvester:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Harvest 5,000+ new songs with 100+ likes from Suno")
-    parser.add_argument("--count", "-c", type=int, default=3836, help="Number of new songs to harvest")
+    parser.add_argument("--count", "-c", type=int, default=5000, help="Number of new songs to harvest")
     parser.add_argument("--min-likes", "-l", type=int, default=100, help="Minimum likes/upvotes required per track")
-    parser.add_argument("--workers", "-w", type=int, default=12, help="Number of concurrent workers")
+    parser.add_argument("--workers", "-w", type=int, default=14, help="Number of concurrent workers")
     parser.add_argument("--catalog", type=str, default="models/suno_song_catalog.json", help="Target catalog path")
     args = parser.parse_args()
 

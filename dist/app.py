@@ -81,6 +81,9 @@ MODEL_PATHS = [
 MODEL_FILE = next((p for p in MODEL_PATHS if p.exists()), MODEL_PATHS[0])
 model = SongwritingReferenceModel(MODEL_FILE)
 
+from src.chat_engine import SunoChatEngine
+chat_engine = SunoChatEngine(MODEL_FILE)
+
 # Hugging Face ZeroGPU compatibility
 # Satisfies ZeroGPU startup scan without intercepting CPU-bound user requests
 try:
@@ -281,7 +284,7 @@ hf_css = """
 }
 """
 
-with gr.Blocks(theme=hf_theme, css=hf_css, title="Suno AI Song Generator & Reference Model", analytics_enabled=False) as demo:
+with gr.Blocks(title="Suno AI Song Generator & Reference Model", analytics_enabled=False) as demo:
     gr.Markdown(
         """
         <div class="hf-hero">
@@ -412,7 +415,65 @@ with gr.Blocks(theme=hf_theme, css=hf_css, title="Suno AI Song Generator & Refer
             p3.click(lambda: ("late night bedroom acoustic confession heartfelt sad", "High"), outputs=[theme_input, tier_select], api_name=False)
             p4.click(lambda: ("heavy 808 cyberpunk bass rage aggressive trap", "Viral"), outputs=[theme_input, tier_select], api_name=False)
 
-        # TAB 2: STYLE EXPLORER
+        # TAB 2: SUNOGPT CHAT STUDIO (ChatGPT-style Interface)
+        with gr.TabItem("💬 SunoGPT Chat Studio", id="tab_chat"):
+            gr.Markdown("### 🤖 SunoGPT Chat — Conversational Songwriting & Scansion Assistant")
+            chat_additional_inputs = [
+                gr.Dropdown(
+                    label="🧠 Model Engine",
+                    choices=[
+                        "Hybrid AI Producer (Recommended)",
+                        "Scansion-LM (Neural Local LM)",
+                        "Reference Model (Statistical Data)",
+                        "ChatGPT Studio (Azure / OpenAI)",
+                    ],
+                    value="Hybrid AI Producer (Recommended)",
+                ),
+                gr.Dropdown(
+                    label="🎭 Producer Persona",
+                    choices=[
+                        "SunoGPT Hit Producer",
+                        "Gen-Z Rapper / Artist",
+                        "Technical Suno V6 Architect",
+                        "Scansion and Lyric Poet",
+                    ],
+                    value="SunoGPT Hit Producer",
+                ),
+                gr.Slider(
+                    label="🔥 Creativity (Temperature)",
+                    minimum=0.1,
+                    maximum=1.4,
+                    value=0.75,
+                    step=0.05,
+                ),
+            ]
+            chat_examples = [
+                ["🔥 Write a viral cyberpunk synthwave song with full 3K Suno V6 specs", "Hybrid AI Producer (Recommended)", "SunoGPT Hit Producer", 0.75],
+                ["📊 What are the highest traction tags and openings in the 21k song catalog?", "Reference Model (Statistical Data)", "SunoGPT Hit Producer", 0.75],
+                ["🎤 Continue these lyrics: [Verse 1] Rain on the glass, neon reflections pass...", "Scansion-LM (Neural Local LM)", "Scansion and Lyric Poet", 0.85],
+                ["✨ Give me 5 novel tag fusions that will stand out on Suno explore", "Reference Model (Statistical Data)", "SunoGPT Hit Producer", 0.75],
+                ["💔 Help me write a heartbreaking acoustic bedroom pop confession", "Hybrid AI Producer (Recommended)", "SunoGPT Hit Producer", 0.75],
+            ]
+            def chat_stream(message, history, engine_mode, persona, temperature):
+                for chunk in chat_engine.generate_response(
+                    message=message,
+                    history=history,
+                    engine_mode=engine_mode,
+                    temperature=temperature,
+                    system_persona=persona,
+                ):
+                    yield chunk
+
+            gr.ChatInterface(
+                fn=chat_stream,
+                additional_inputs=chat_additional_inputs,
+                additional_inputs_accordion=gr.Accordion("⚙️ Producer Controls & Engine Settings", open=False),
+                examples=chat_examples,
+                chatbot=gr.Chatbot(height=580, layout="bubble"),
+                autofocus=False,
+            )
+
+        # TAB 3: STYLE EXPLORER
         with gr.TabItem("🔍 Style & Vocabulary Explorer", id="tab_explorer"):
             gr.Markdown("### Discover Trending and Novel Musical Descriptors")
             with gr.Row():
@@ -468,8 +529,15 @@ with gr.Blocks(theme=hf_theme, css=hf_css, title="Suno AI Song Generator & Refer
     )
 
 if __name__ == "__main__":
-    demo.queue().launch(
-        server_name="0.0.0.0",
-        server_port=7860,
-        show_api=False,
-    )
+    try:
+        demo.queue().launch(
+            theme=hf_theme,
+            css=hf_css,
+            server_name="0.0.0.0",
+            server_port=7860,
+        )
+    except TypeError:
+        demo.queue().launch(
+            server_name="0.0.0.0",
+            server_port=7860,
+        )

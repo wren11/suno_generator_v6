@@ -488,15 +488,15 @@ def generate_corpus(n: int = 720) -> list[dict]:
     """Lyric-verse examples for causal LM SFT. Original lines only."""
     rng = random.Random(2026)
     keys = list(THEMES.keys())
-    rows: list[dict] = []
     user_rows = _load_jsonl(USER_EXTRACTS)
+    rows: list[dict] = []
     i = 0
     while len(rows) < n:
         key = keys[i % len(keys)]
         theme = THEMES[key]
         title = rng.choice(theme["titles"])
         idea = rng.choice(theme["ideas"])
-        if i % 5 == 0 and user_rows:
+        if user_rows and (i % 2 == 0 or rng.random() > 0.25):
             u = user_rows[i % len(user_rows)]
             idea = u.get("idea") or idea
             title = u.get("title") or title

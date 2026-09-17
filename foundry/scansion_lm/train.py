@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 
 import torch
@@ -81,7 +82,7 @@ def train(
     resume: bool = False,
     rebuild: bool = True,
 ) -> dict:
-    torch.set_num_threads(2)
+    torch.set_num_threads(min(8, os.cpu_count() or 4))
     RUNS.mkdir(parents=True, exist_ok=True)
     write_status(phase="extract", training=True, step=0, loss=None, error=None, resume=resume)
     if rebuild:
@@ -118,7 +119,7 @@ def train(
     same_arch = (
         saved_cfg.get("n_embd") == 768
         and saved_cfg.get("n_layer") == 6
-        and saved_cfg.get("vocab_size") in (50257, 50258)
+        and saved_cfg.get("vocab_size") in (50257, 50258, 50259, 50260)
     )
     if resume and same_arch and (EXPORT / "model.safetensors").exists():
         model = AutoModelForCausalLM.from_pretrained(str(EXPORT))

@@ -138,23 +138,83 @@ def generate_clean_title(theme: str, user_title: str = "", lipogram_letter: str 
         cand = "Supersonic Velocity"
     elif "diss" in t_lower and "discord" in t_lower:
         cand = "Banned on Sight"
+META_PROMPT_STOP_WORDS = {
+    "the", "and", "that", "this", "with", "from", "for", "like", "about",
+    "make", "song", "track", "sounds", "sound", "use", "using", "model", "help", "create",
+    "please", "titled", "called", "dense", "lyrics", "style", "styles", "very", "cute",
+    "being", "your", "living", "in", "a", "an", "of", "to", "on", "it", "max",
+    "all", "best", "tags", "songs", "data", "dataset", "datasets", "will", "viral",
+    "me", "our", "we", "can", "good", "get", "need", "give", "build", "compose",
+    "write", "generate", "produce", "drop", "craft", "something", "actually",
+    "useful", "useable", "music", "into", "full", "specs", "prompt", "suno",
+    "ai", "llm", "terrible", "inference", "until", "real", "properly", "audio",
+    "quality", "mode", "realism", "instruments", "master", "polished", "radio"
+}
+
+
+def generate_clean_title(theme: str, explicit_title: str = "", lipogram_letter: str = "") -> str:
+    if explicit_title and explicit_title.strip():
+        resolved = clean_title_cliches(explicit_title.strip())
+        if lipogram_letter:
+            words = [w for w in re.findall(r"[A-Za-z0-9'-]+", resolved) if lipogram_letter.lower() not in w.lower()]
+            resolved = " ".join(words) if words else ("TOP DOG" if lipogram_letter.lower() == "e" else "RAW SOUND")
+        return resolved
+
+    # Strip out prompt directives, bracketed metatags, and lipogram phrases
+    cleaned = re.sub(r"\[[^\]]+\]", "", theme)
+    cleaned = re.sub(r"\([^)]*max[^)]*\)", "", cleaned, flags=re.I)
+    cleaned = re.sub(r"(without using\s+.*|no\s+[a-z]\s+.*|bann?\s+.*|lipogram\s+.*)", "", cleaned, flags=re.I)
+    cleaned = re.sub(r"(polished radio master|keep core song|hooks|melody|structure|make it bright).*", "", cleaned, flags=re.I)
+    cleaned = cleaned.strip()
+    t_lower = cleaned.lower()
+
+    if "hacker girlfriend" in t_lower or ("hacker" in t_lower and ("desktop" in t_lower or "girlfriend" in t_lower or "waifu" in t_lower)):
+        cand = "Desktop Girlfriend"
+    elif "waifu" in t_lower:
+        cand = "Cyber Waifu"
+    elif "chopper" in t_lower or "eminem" in t_lower:
+        cand = "Supersonic Velocity"
+    elif "diss" in t_lower and "discord" in t_lower:
+        cand = "Banned on Sight"
+    elif any(w in t_lower for w in ("manson", "marylin", "marilyn")):
+        cand = "Beautiful Decay"
+    elif any(w in t_lower for w in ("slipknot", "deathcore")):
+        cand = "Fractured Crown"
+    elif "rammstein" in t_lower:
+        cand = "Iron Feuer"
     else:
         raw_words = re.findall(r"[A-Za-z0-9'-]+", cleaned)
-        stop_words = {
-            "the", "and", "that", "this", "with", "from", "for", "like", "about",
-            "make", "song", "track", "sounds", "use", "model", "help", "create",
-            "please", "titled", "called", "dense", "lyrics", "style", "very", "cute",
-            "being", "your", "living", "in", "a", "an", "of", "to", "on", "it", "max"
-        }
-        subject_words = [w for w in raw_words if w.lower() not in stop_words and len(w) > 2]
-        if len(subject_words) >= 2:
+        dedup_words: list[str] = []
+        seen_words = set()
+        for w in raw_words:
+            wl = w.lower()
+            if wl not in META_PROMPT_STOP_WORDS and len(wl) > 2 and wl not in seen_words:
+                seen_words.add(wl)
+                dedup_words.append(w)
+        subject_words = dedup_words
+
+        genre_names = {"metal", "heavy", "rock", "rap", "pop", "synthwave", "cyberpunk", "country", "folk", "ballad", "industrial"}
+        if all(w.lower() in genre_names for w in subject_words) or not subject_words:
+            if "metal" in t_lower or "heavy" in t_lower:
+                cand = "Iron Dominion"
+            elif "synthwave" in t_lower or "cyberpunk" in t_lower:
+                cand = "Neon Horizon"
+            elif "rap" in t_lower or "trap" in t_lower or "drill" in t_lower:
+                cand = "Undisputed Reign"
+            elif "rock" in t_lower or "punk" in t_lower or "grunge" in t_lower:
+                cand = "Voltage Peak"
+            elif "pop" in t_lower or "dance" in t_lower:
+                cand = "Heartbeat Radio"
+            elif "country" in t_lower or "folk" in t_lower:
+                cand = "County Line Road"
+            else:
+                cand = "Radio Master"
+        elif len(subject_words) >= 2:
             cand = f"{subject_words[0].capitalize()} {subject_words[1].capitalize()}"
             if len(subject_words) >= 3 and len(cand) < 18:
                 cand = f"{cand} {subject_words[2].capitalize()}"
         elif subject_words:
-            cand = f"{subject_words[0].capitalize()} Mode"
-        else:
-            cand = "Radio Master"
+            cand = f"{subject_words[0].capitalize()} Anthem"
 
     cand = clean_title_cliches(cand)
     if lipogram_letter:
@@ -176,7 +236,7 @@ def detect_song_profile(theme: str, title: str = "") -> dict[str, Any]:
         genre = "kpop"
     elif any(k in t_lower for k in ("rap", "hip hop", "hip-hop", "trap", "drill", "chopper", "bars", "spit", "mc", "diss", "roast", "eminem")):
         genre = "rap"
-    elif any(k in t_lower for k in ("metal", "deathcore", "thrash", "heavy metal", "grunge", "screaming", "hardcore")):
+    elif any(k in t_lower for k in ("metal", "deathcore", "thrash", "heavy metal", "grunge", "screaming", "hardcore", "manson", "marylin", "marilyn", "rammstein", "slipknot")):
         genre = "metal"
     elif any(k in t_lower for k in ("rock", "punk", "alt-rock", "garage", "indie rock")):
         genre = "rock"
@@ -206,7 +266,7 @@ def detect_song_profile(theme: str, title: str = "") -> dict[str, Any]:
     is_diss = any(k in t_lower for k in ("diss", "roast", "murder", "banned", "insult", "expose", "attack", "beef", "discord", "mod"))
     is_16th_pocket = is_chopper or any(k in t_lower for k in ("16th", "locked pocket", "clutch", "pocket grid", "rotating tempo"))
 
-    # 4. Extract Keywords & Core Entities (purged of constraint phrases, WITHOUT SPLITTING ON 's')
+    # 4. Extract Keywords & Core Entities (purged of prompt instructions and meta words)
     theme_purged = re.sub(
         r"(without using\s+.*|no\s+[a-z]\s+.*|bann?\s+.*|lipogram\s+.*)",
         "",
@@ -217,12 +277,7 @@ def detect_song_profile(theme: str, title: str = "") -> dict[str, Any]:
     keywords = [
         w.lower()
         for w in words
-        if w.lower() not in (
-            "the", "and", "that", "this", "with", "from", "for", "like", "about",
-            "make", "song", "track", "sounds", "use", "model", "help", "create",
-            "please", "titled", "called", "dense", "lyrics", "style", "audio", "quality",
-            "max", "mode", "realism", "instruments", "master", "polished"
-        )
+        if w.lower() not in META_PROMPT_STOP_WORDS
     ]
 
     # 5. Clean Title Resolution
@@ -241,25 +296,52 @@ def detect_song_profile(theme: str, title: str = "") -> dict[str, Any]:
     }
 
 
-
 def _summarize_theme_for_style_tag(theme: str, max_words: int = 14) -> str:
-    """Extract a clean, punchy musical genre signature so it does not inflate the JSON style block."""
+    """Extract a clean, punchy musical genre signature so it does not inflate or pollute the JSON style block."""
     prof = detect_song_profile(theme)
-    if prof["is_chopper"] or "eminem" in theme.lower():
+    t_lower = theme.lower()
+    
+    if prof["is_chopper"] or "eminem" in t_lower:
         return "FAST RAPID-FIRE CHOPPER RAP IN THE STYLE OF EMINEM RAP GOD. 140 BPM ROTATING TEMPO (16TH LOCKED CLUTCH POCKET / 240 BPM SUPERSONIC CHOPPER SPRINT)"
+    
+    # Specific artist sonics
+    if any(w in t_lower for w in ("manson", "marylin", "marilyn")):
+        return "INDUSTRIAL METAL, GOTHIC SHOCK ROCK, 90S INDUSTRIAL, DISTORTED MECHANICAL BASS SYNTH, CRUSHING DROP-D POWER CHORDS, EERIE DETUNED SYNTH PADS, 118 BPM, COLD AGGRESSIVE INDUSTRIAL GROOVE"
+    elif any(w in t_lower for w in ("slipknot", "deathcore")):
+        return "NU-METAL, DOWNTUNED DROP-B RIFFS, AGGRESSIVE BLAST BEATS, PERCUSSION BARRAGE, DUAL SCREAM-CLEAN VOCALS, HEAVY GROOVE"
+    elif any(w in t_lower for w in ("rammstein", "neue deutsche")):
+        return "NEUE DEUTSCHE HÄRTE, INDUSTRIAL METAL, MARCHING 4-ON-THE-FLOOR KICK, STOMPING POWER CHORDS, DEEP RESONANT BARITONE LEAD, 120 BPM"
+    elif any(w in t_lower for w in ("metallica", "thrash")):
+        return "THRASH METAL, SPEED METAL, PALM-MUTED DOWNPICKED RIFFS, WAILING GUITAR SOLOS, DOUBLE-BASS KICK, 160 BPM"
 
+    g = prof["genre"]
+    if g == "metal":
+        return "HEAVY METAL, INDUSTRIAL METAL, GOTHIC METAL, DARK, AGGRESSIVE, CRUSHING DISTORTED GUITAR RIFFS, DOUBLE-KICK BLAST BEATS, 124 BPM"
+    elif g == "rap":
+        return "UNDERGROUND TRAP RAP, HARD 808 GLIDES, FAST PUNCHY SNARES, 140 BPM, AGGRESSIVE VOCAL DELIVERY, TIGHT SYLLABIC POCKET"
+    elif g == "rock":
+        return "ALTERNATIVE ROCK, HARD ROCK, PUNCHY OVERDRIVEN GUITARS, DRIVING BASSLINE, 128 BPM, GRITTY ROCK LEAD"
+    elif g == "synthwave":
+        return "RETRO CYBERPUNK SYNTHWAVE, 124 BPM, ANALOG ARPEGGIATOR, GATED REVERB SNARE, DRIVING JUNO BASSLINE, RETRO-FUTURISTIC"
+    elif g == "pop":
+        return "ELECTRO-POP, DANCE-POP, 122 BPM, CATCHY SYNTH HOOK, PUNCHY TRANSIENTS, SWEET ANTHEMIC VOCAL BELT"
+    elif g == "country":
+        return "COUNTRY POP, 110 BPM, FINGERPICKED ACOUSTIC DREADNOUGHT, SLIDE GUITAR, WARM RESONANT LEAD, TIGHT DRUMS"
+    elif g == "rnb":
+        return "CONTEMPORARY R&B, NEO-SOUL, 85 BPM, WARM RHODES PIANO, BREATHY FALSETTO, DEEP SUB-BASS"
+    elif g == "kpop":
+        return "K-POP, BRIGHT ELECTRO-POP, 126 BPM, SNAPPY SNARE, SPARKLE SYNTHS, ANTHEMIC HOOK"
+
+    # Default fallback to clean extracted style
     t = theme.strip()
     m_style = re.search(r"\[STYLE:\s*([^\]]+)\]", t, re.I)
     if m_style:
         t = m_style.group(1).strip()
     t = re.sub(r"\[(AUDIO_QUALITY|QUALITY|REALISM|REAL_INSTRUMENTS|PRODUCTION|STEREO_FIELD|VOCAL_CHAIN|DRUM_ENGINEERING|BASS_FOUNDATION)[^\]]*\]", "", t, flags=re.I).strip()
-    if len(t) <= 90:
-        return t.upper()
-    t_clean = re.sub(r"(and roast|because i dropped|banning me|out of discord|like a bunch of).*", "", t, flags=re.I).strip()
-    words = [w for w in re.split(r"[,;|\s]+", t_clean) if w]
+    words = [w for w in re.split(r"[,;|\s]+", t) if w.lower() not in META_PROMPT_STOP_WORDS and len(w) > 2]
     if words:
         return " ".join(words[:max_words]).upper()
-    return t[:80].upper()
+    return "POLISHED RADIO MASTER, RADIO CALIBRATED"
 
 
 def build_studio_style_block(
@@ -275,14 +357,21 @@ def build_studio_style_block(
 
     derived_tags: list[str] = []
     if inference_model and hasattr(inference_model, "get_high_traction_tags"):
-        tokens = tokenize_creative_text(theme.lower())
-        derived_tags = inference_model.get_high_traction_tags(tokens, limit=3)
+        tokens = [t for t in tokenize_creative_text(theme.lower()) if t.lower() not in META_PROMPT_STOP_WORDS]
+        if tokens:
+            derived_tags = [
+                m for m in inference_model.get_high_traction_tags(tokens, limit=3)
+                if m.lower() not in META_PROMPT_STOP_WORDS and m.lower() not in genre_summary.lower()
+            ]
     elif inference_model and hasattr(inference_model, "_state"):
         tag_traction = inference_model._state.get("tag_traction") or {}
-        tokens = tokenize_creative_text(theme.lower())
+        tokens = [t for t in tokenize_creative_text(theme.lower()) if t.lower() not in META_PROMPT_STOP_WORDS]
         matched = [(tok, tag_traction[tok].get("avg_likes", 0)) for tok in tokens if tok in tag_traction]
         matched.sort(key=lambda x: -x[1])
-        derived_tags = [m[0].upper() for m in matched[:3]]
+        derived_tags = [
+            m[0].upper() for m in matched[:3]
+            if m[0].lower() not in META_PROMPT_STOP_WORDS and m[0].lower() not in genre_summary.lower()
+        ]
 
     style_tokens = [genre_summary]
     if derived_tags:
@@ -728,69 +817,214 @@ def compose_dynamic_lyrics(
             ]
 
     elif g == "metal":
-        intro_lines = ["[Guitar Feedback Screaming]", "[Double-Kick Thunder]", f"({title_clean}!)"]
-        v1_lines = [
-            f"The sky turns black with the sound of iron blades,",
-            f"Marching through the storm where the sunlight fades.",
-            f"Frozen in the sea where the ancient hammer falls,",
-            f"Thunder of the war horns shakes the mountain walls.",
-            f"With {subject_1} raging in the blood and bone,",
-            f"We claim the frozen kingdom as our own!",
-            f"Axes in the air and the fire in our eyes,",
-            f"Writing our name across the burning skies!",
-        ]
-        pre_lines = [
-            "Feel the ground shatter, hear the war horns cry!",
-            "Underneath the thunder of an open sky!",
-            "Raise the banner high through the smoke and ash!",
-            "Listen to the iron and the armor clash!",
-        ]
-        chorus_lines = [
-            f"{title_clean}! Rise through the frost and flame!",
-            f"Carve the steel with the ancient name!",
-            f"Never surrender, never bend the knee!",
-            f"Masters of the thunder on the frozen sea!",
-            f"({title_clean}!)",
-        ]
-        v2_lines = [
-            f"Blood upon the snow and the ice turns red,",
-            f"Marching with the legions of the undefeated dead.",
-            f"Heavy distortion tearing through the gale,",
-            f"Against our fury no mortal can prevail!",
-        ]
-        v3_lines = [
-            f"Ten thousand shields in the blinding hail,",
-            f"We strike like thunder and we will not fail.",
-            f"The final conquest on the sacred ground,",
-            f"Where the immortal crown is found!",
-        ]
-        bridge_lines = [
-            "[Half-Time Chugging Breakdown - Double Kick]",
-            "Silence falls before the strike...",
-            "Nothing stands when the hammer hits!",
-        ]
-        outro_lines = ["[Final Roaring Crash]", "[Amp Feedback Ringing]", "[Sudden Silence]"]
-        sec_5k = [
-            ("[Intro: Roaring Feedback & Double-Kick]", intro_lines),
-            ("[Verse 1: Crushing Drop-D Riffs]", v1_lines),
-            ("[Pre-Chorus: Rising Blast Beats]", pre_lines),
-            ("[Chorus: Stadium Anthemic Roar]", chorus_lines),
-            ("[Verse 2: Fast Chug & Shred]", v2_lines),
-            ("[Verse 3: Epic Battle Climax]", v3_lines),
-            ("[Bridge: Half-Time Doom Breakdown]", bridge_lines),
-            ("[Final Chorus: Maximum Fury]", chorus_lines),
-            ("[Outro: Thunderous Crash]", outro_lines),
-        ]
-        sec_3k = [
-            ("[Intro]", intro_lines),
-            ("[Verse 1]", v1_lines[:6]),
-            ("[Pre-Chorus]", pre_lines[:2]),
-            ("[Chorus]", chorus_lines[:4]),
-            ("[Verse 2]", v2_lines),
-            ("[Bridge]", bridge_lines),
-            ("[Final Chorus]", chorus_lines[:4]),
-            ("[Outro]", outro_lines),
-        ]
+        t_low = theme.lower()
+        is_industrial_manson = any(k in t_low for k in ("manson", "marylin", "marilyn", "industrial", "goth", "shock rock", "nine inch", "nin", "zombie"))
+        is_numetal_core = any(k in t_low for k in ("slipknot", "deathcore", "metalcore", "breakdown", "core", "screaming"))
+
+        if is_industrial_manson:
+            intro_lines = [
+                "[Cold Mechanical Bass Drone, Eerie Detuned Synthesizer]",
+                "(Radio static hissing...)",
+                '(Whispered distorted voice...) "Look in the mirror. Tell me who you see."',
+            ]
+            v1_lines = [
+                "Cold chrome needle on a velvet floor,",
+                "Feeding on the static of the TV roar.",
+                "Painted on a smile made of broken glass,",
+                "Selling you a heaven that will never pass.",
+                "Chalk white powder on a blackened tongue,",
+                "Counting every second till the bell is rung.",
+                "Porcelain skin and a hollow chest,",
+                f"Give me all the fever, put the fear to rest.",
+            ]
+            pre_lines = [
+                "Look at the saints in their paper skins!",
+                "Look at the wire where the god begins!",
+                "You want the glamour, you want the knife!",
+                "Trade your soul for a chemical life!",
+            ]
+            chorus_lines = [
+                f"{title_clean}! Drink from the holy screen!",
+                "Prettiest disease that you have ever seen!",
+                "Swallow down the venom that you bought and sold!",
+                "Watch the plastic crown turn to dirty gold!",
+                f"({title_clean}!)",
+                "We are the poison and the brand new day!",
+            ]
+            v2_lines = [
+                "Microphone dripping with a synthetic stain,",
+                "Preach another sermon to the numb and vain.",
+                "They love the monster when the spotlight glows,",
+                "Crushing all the flowers that the garden grows.",
+                "Sign your confession with a lipstick mark,",
+                "Dancing with the shadows in the velvet dark.",
+                "The camera loves you when your fingers bleed,",
+                "Take another mouthful of the holy greed!",
+            ]
+            v3_lines = [
+                "Turn the dial higher till the circuit screams,",
+                "Drowning in a puddle of commercial dreams.",
+                "Hollowed-out disciples on their bended knees,",
+                "Begging for an idol that can never please.",
+            ]
+            bridge_lines = [
+                "[Half-Time Industrial Breakdown - Stomping 4-on-the-Floor]",
+                '(Spoken whispered rasp...) "Do you love your new god yet?',
+                'Does he make you feel alive?',
+                'Or are you just waiting for the signal to die?"',
+                '(Distorted scream...) "BREAK THE GLASS!"',
+                "[Guitar Solo: Screaming Wah-Pedal, Industrial Distortion]",
+            ]
+            outro_lines = [
+                f"({title_clean}!)",
+                "[Feedback Ringing, Radio Static, Cold Mechanical Breath]",
+                '(Whispered...) "Nothing left to sell."',
+                "[Sudden Cut on the One]",
+            ]
+            sec_5k = [
+                ("[Intro: Mechanical Stomp & Eerie Synth]", intro_lines),
+                ("[Verse 1: Grinding Bass, Distorted Whisper]", v1_lines),
+                ("[Pre-Chorus: Rising Blast Beats, Industrial Stomp]", pre_lines),
+                ("[Chorus: Explosive Shock-Rock Detonation]", chorus_lines),
+                ("[Verse 2: Heavy Drop-D Chug, Syncopated Pocket]", v2_lines),
+                ("[Verse 3: Sparse Mechanical Groove]", v3_lines),
+                ("[Bridge: Half-Time Industrial Breakdown]", bridge_lines),
+                ("[Final Chorus: Full Frequency Fury, Doubled Octaves]", chorus_lines),
+                ("[Outro: Feedback & Static Fade]", outro_lines),
+            ]
+            sec_3k = [
+                ("[Intro: Mechanical Drone]", intro_lines),
+                ("[Verse 1: Grinding Bass, Distorted Whisper]", v1_lines[:6]),
+                ("[Pre-Chorus: Rising Blast Beats]", pre_lines),
+                ("[Chorus: Explosive Shock-Rock Detonation]", chorus_lines[:4]),
+                ("[Verse 2: Heavy Drop-D Chug]", v2_lines[:4]),
+                ("[Bridge: Half-Time Industrial Breakdown]", bridge_lines[:4]),
+                ("[Final Chorus]", chorus_lines[:4]),
+                ("[Outro]", outro_lines),
+            ]
+        elif is_numetal_core:
+            intro_lines = ["[Downtuned Drop-B Feedback]", "[Blast Beat Drum Roll]", f"({title_clean}!)"]
+            v1_lines = [
+                "Suffocating inside the walls I built,",
+                "Drowning in the venom of a borrowed guilt.",
+                "Every promise that you carved in stone,",
+                "Cracked in half and left me here alone.",
+                "Heart rate redlining at a thousand beats,",
+                "Blood on the concrete running in the streets.",
+                "You said you'd save me from the burning dark,",
+                "Now you're the match that lit the fatal spark!",
+            ]
+            pre_lines = [
+                "Feel the pressure in the temple spike!",
+                "Brace for impact when the hammer strike!",
+                "You can't control what you can't contain!",
+                "Living in the wreckage of the severed chain!",
+            ]
+            chorus_lines = [
+                f"{title_clean}! Tearing through the skin and bone!",
+                "Sitting on the ruins of a shattered throne!",
+                "Scream into the void till the silence breaks!",
+                "Pay the price for every vow you take!",
+                f"({title_clean}!)",
+            ]
+            v2_lines = [
+                "Second strike coming with a doubled force,",
+                "Nothing in this world can derail the course.",
+                "Count the scars that you left behind,",
+                "Every single one burning in the mind.",
+            ]
+            bridge_lines = [
+                "[Downtuned Chug Breakdown - Panic Chord Stabs]",
+                "(Guttural roar...) BLEED IT OUT!",
+                "[Heavy Double-Kick Flurry]",
+                "YOU WILL NEVER OWN ME!",
+            ]
+            outro_lines = ["[Blast Beat Climax]", "[Sudden Snare Snap Mute]", "(Silence)"]
+            sec_5k = [
+                ("[Intro: Drop-B Feedback & Blast Roll]", intro_lines),
+                ("[Verse 1: Aggressive Chug Riffs]", v1_lines),
+                ("[Pre-Chorus: Rising Pressure]", pre_lines),
+                ("[Chorus: Anthemic Wall of Sound]", chorus_lines),
+                ("[Verse 2: Double-Time Fury]", v2_lines),
+                ("[Bridge: Crushing Heavy Breakdown]", bridge_lines),
+                ("[Final Chorus: Maximum Frequency Climax]", chorus_lines),
+                ("[Outro: Sudden Stop]", outro_lines),
+            ]
+            sec_3k = [
+                ("[Intro]", intro_lines),
+                ("[Verse 1]", v1_lines[:6]),
+                ("[Pre-Chorus]", pre_lines[:2]),
+                ("[Chorus]", chorus_lines[:4]),
+                ("[Verse 2]", v2_lines[:4]),
+                ("[Bridge]", bridge_lines),
+                ("[Final Chorus]", chorus_lines[:4]),
+                ("[Outro]", outro_lines),
+            ]
+        else:
+            # Epic Classic Heavy Metal / Thrash
+            intro_lines = ["[Guitar Feedback Screaming]", "[Double-Kick Thunder]", f"({title_clean}!)"]
+            v1_lines = [
+                f"The sky turns black with the sound of iron blades,",
+                f"Marching through the storm where the sunlight fades.",
+                f"Frozen in the sea where the ancient hammer falls,",
+                f"Thunder of the war horns shakes the mountain walls.",
+                f"With {subject_1} raging in the blood and bone,",
+                f"We claim the frozen kingdom as our own!",
+                f"Axes in the air and the fire in our eyes,",
+                f"Writing our name across the burning skies!",
+            ]
+            pre_lines = [
+                "Feel the ground shatter, hear the war horns cry!",
+                "Underneath the thunder of an open sky!",
+                "Raise the banner high through the smoke and ash!",
+                "Listen to the iron and the armor clash!",
+            ]
+            chorus_lines = [
+                f"{title_clean}! Rise through the frost and flame!",
+                f"Carve the steel with the ancient name!",
+                f"Never surrender, never bend the knee!",
+                f"Masters of the thunder on the frozen sea!",
+                f"({title_clean}!)",
+            ]
+            v2_lines = [
+                f"Blood upon the snow and the ice turns red,",
+                f"Marching with the legions of the undefeated dead.",
+                f"Heavy distortion tearing through the gale,",
+                f"Against our fury no mortal can prevail!",
+            ]
+            v3_lines = [
+                f"Ten thousand shields in the blinding hail,",
+                f"We strike like thunder and we will not fail.",
+                f"The final conquest on the sacred ground,",
+                f"Where the immortal crown is found!",
+            ]
+            bridge_lines = [
+                "[Half-Time Chugging Breakdown - Double Kick]",
+                "Silence falls before the strike...",
+                "Nothing stands when the hammer hits!",
+            ]
+            outro_lines = ["[Final Roaring Crash]", "[Amp Feedback Ringing]", "[Sudden Silence]"]
+            sec_5k = [
+                ("[Intro: Roaring Feedback & Double-Kick]", intro_lines),
+                ("[Verse 1: Crushing Drop-D Riffs]", v1_lines),
+                ("[Pre-Chorus: Rising Blast Beats]", pre_lines),
+                ("[Chorus: Stadium Anthemic Roar]", chorus_lines),
+                ("[Verse 2: Fast Chug & Shred]", v2_lines),
+                ("[Verse 3: Epic Battle Climax]", v3_lines),
+                ("[Bridge: Half-Time Doom Breakdown]", bridge_lines),
+                ("[Final Chorus: Maximum Fury]", chorus_lines),
+                ("[Outro: Thunderous Crash]", outro_lines),
+            ]
+            sec_3k = [
+                ("[Intro]", intro_lines),
+                ("[Verse 1]", v1_lines[:6]),
+                ("[Pre-Chorus]", pre_lines[:2]),
+                ("[Chorus]", chorus_lines[:4]),
+                ("[Verse 2]", v2_lines),
+                ("[Bridge]", bridge_lines),
+                ("[Final Chorus]", chorus_lines[:4]),
+                ("[Outro]", outro_lines),
+            ]
 
     elif g == "rock":
         v1_open = _pick_learned(learned_openings, "rock_v1", "Basement floor covered in guitar strings")
@@ -1291,6 +1525,7 @@ def create_complete_song_bundle(
     custom_text: str = "",
     reference_image_url: str = "",
     image_prompt: str = "",
+    render_cover: bool = True,
     render_video: bool = True,
     out_dir: str | Path = "output/songs",
     lyrics: str = "",
@@ -1402,34 +1637,35 @@ def create_complete_song_bundle(
     cover_png = None
     cover_jpg = None
     video_mp4 = None
-    try:
-        from src.cover_studio import create_song_cover, generate_10s_teaser_video
-        cover_res = create_song_cover(
-            final_title,
-            artist=artist or "SUNO STUDIO MASTER",
-            genre=prof["genre"],
-            bpm=bpm,
-            custom_text=custom_text,
-            reference_image_url=reference_image_url,
-            image_prompt=image_prompt or cover_prompt["prompt"],
-            out_dir=song_dir,
-            slug=slug,
-            p3k=p3k,
-        )
-        cover_png = str(cover_res["png_path"])
-        cover_jpg = str(cover_res["jpg_path"])
-
-        if render_video:
-            vid_res = generate_10s_teaser_video(
-                cover_res["png_path"],
-                song_dir / f"{slug}_teaser_10s.mp4",
+    if render_cover:
+        try:
+            from src.cover_studio import create_song_cover, generate_10s_teaser_video
+            cover_res = create_song_cover(
+                final_title,
+                artist=artist or "SUNO STUDIO MASTER",
+                genre=prof["genre"],
                 bpm=bpm,
-                title=final_title,
+                custom_text=custom_text,
+                reference_image_url=reference_image_url,
+                image_prompt=image_prompt or cover_prompt["prompt"],
+                out_dir=song_dir,
+                slug=slug,
+                p3k=p3k,
             )
-            if vid_res:
-                video_mp4 = str(vid_res)
-    except Exception as ex:
-        print(f"[!] Warning rendering cover art or teaser video: {ex}")
+            cover_png = str(cover_res["png_path"])
+            cover_jpg = str(cover_res["jpg_path"])
+
+            if render_video:
+                vid_res = generate_10s_teaser_video(
+                    cover_res["png_path"],
+                    song_dir / f"{slug}_teaser_10s.mp4",
+                    bpm=bpm,
+                    title=final_title,
+                )
+                if vid_res:
+                    video_mp4 = str(vid_res)
+        except Exception as ex:
+            print(f"[!] Warning rendering cover art or teaser video: {ex}")
 
     brief_md = f"""# Studio Production Brief: {final_title}
 
